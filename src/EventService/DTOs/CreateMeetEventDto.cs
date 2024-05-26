@@ -8,7 +8,7 @@ public class CreateMeetEventDto
     public string Title { get; set; }
 
     [Required]
-    public string? Description { get; set; }
+    public string Description { get; set; }
 
     [Required]
     public DateTime EventStartDate { get; set; }
