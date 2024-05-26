@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{54CB69EA-B995-4A41-BD4F-74DA6063F192}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventService", "src\EventService\EventService.csproj", "{29D870B6-D221-4D4E-A694-C4BB90033E47}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29D870B6-D221-4D4E-A694-C4BB90033E47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29D870B6-D221-4D4E-A694-C4BB90033E47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29D870B6-D221-4D4E-A694-C4BB90033E47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29D870B6-D221-4D4E-A694-C4BB90033E47}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{29D870B6-D221-4D4E-A694-C4BB90033E47} = {54CB69EA-B995-4A41-BD4F-74DA6063F192}
+	EndGlobalSection
+EndGlobal
