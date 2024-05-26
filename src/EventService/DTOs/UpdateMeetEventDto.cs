@@ -5,6 +5,9 @@ namespace EventService.DTOs;
 public class UpdateMeetEventDto
 {
     [Required]
+    public Guid Id { get; set; }
+
+    [Required]
     public string Title { get; set; }
 
     [Required]
@@ -18,9 +21,6 @@ public class UpdateMeetEventDto
 
     [Required]
     public string Location { get; set; }
-
-    [Required]
-    public string Author { get; set; }
 
     [Required]
     public string Visibility { get; set; }
