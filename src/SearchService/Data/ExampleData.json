@@ -1,0 +1,98 @@
+[
+  {
+    "id": "722b51a1-95b2-4a86-b307-5e6b27fb5cbf",
+    "title": "Annual Meetup",
+    "description": "A gathering of all members for the annual meetup.",
+    "createdAt": "2024-05-26T14:54:14.437123Z",
+    "updatedAt": "2024-05-26T14:54:14.437146Z",
+    "eventStartDate": "2024-06-01T10:00:00Z",
+    "eventEndDate": "2024-06-01T18:00:00Z",
+    "location": "City Hall",
+    "author": "Organizer Name",
+    "visibility": "Public",
+    "images": [
+      "image1.jpg",
+      "image2.jpg"
+    ]
+  },
+  {
+    "id": "909b4795-9bfe-4d6f-ba96-c57b136df2ca",
+    "title": "Tech Conference",
+    "description": "An exciting tech conference with industry leaders.",
+    "createdAt": "2024-05-26T14:54:14.437377Z",
+    "updatedAt": "2024-05-26T14:54:14.437377Z",
+    "eventStartDate": "2024-07-15T09:00:00Z",
+    "eventEndDate": "2024-07-15T17:00:00Z",
+    "location": "Tech Hub",
+    "author": "Tech Organizer",
+    "visibility": "InviteOnly",
+    "images": [
+      "tech1.jpg",
+      "tech2.jpg"
+    ]
+  },
+  {
+    "id": "cb5fbe5a-bdef-474f-813a-feebb16752a9",
+    "title": "Community BBQ",
+    "description": "A fun BBQ event for the local community.",
+    "createdAt": "2024-05-26T14:54:14.437377Z",
+    "updatedAt": "2024-05-26T14:54:14.437378Z",
+    "eventStartDate": "2024-08-10T12:00:00Z",
+    "eventEndDate": "2024-08-10T15:00:00Z",
+    "location": "Community Park",
+    "author": "Community Leader",
+    "visibility": "OnRequest",
+    "images": [
+      "bbq1.jpg",
+      "bbq2.jpg"
+    ]
+  },
+  {
+    "id": "0f70fc4b-1d50-48c7-aaaf-feed88fe758a",
+    "title": "Just new Meetup",
+    "description": "lazy desc",
+    "createdAt": "2024-05-26T16:55:33.078061Z",
+    "updatedAt": "2024-05-26T16:55:33.078061Z",
+    "eventStartDate": "2024-06-01T10:00:00Z",
+    "eventEndDate": "2024-06-01T18:00:00Z",
+    "location": "City Hall2",
+    "author": "Test",
+    "visibility": "Public",
+    "images": [
+      "image1.jpg",
+      "image2.jpg"
+    ]
+  },
+  {
+    "id": "3d343121-d6c2-450d-a647-4a8d793890d0",
+    "title": "Just new Meetup",
+    "description": "lazy desc",
+    "createdAt": "2024-05-26T17:00:11.937649Z",
+    "updatedAt": "2024-05-26T17:00:11.937649Z",
+    "eventStartDate": "2024-06-01T10:00:00Z",
+    "eventEndDate": "2024-06-01T18:00:00Z",
+    "location": "City Hall2",
+    "author": "Test",
+    "visibility": "Public",
+    "images": [
+      "image1.jpg",
+      "image2.jpg"
+    ]
+  },
+  {
+    "id": "7275df34-0116-49db-aa10-965c02bbb86c",
+    "title": "Just new Meetup",
+    "description": "lazy desc",
+    "createdAt": "2024-05-26T17:00:30.995731Z",
+    "updatedAt": "2024-05-26T17:00:30.995731Z",
+    "eventStartDate": "2024-06-01T10:00:00Z",
+    "eventEndDate": "2024-06-01T18:00:00Z",
+    "location": "City Hall2",
+    "author": "Test",
+    "visibility": "Public",
+    "images": [
+      "image1.jpg",
+      "image2.jpg"
+    ]
+  }
+]
