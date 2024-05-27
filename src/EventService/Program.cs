@@ -14,6 +14,15 @@ builder.Services.AddDbContext<MeetEventDbContext>(opt =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMassTransit(x =>
 {
+    //outbox when incase message will not be delivered
+    x.AddEntityFrameworkOutbox<MeetEventDbContext>(o =>
+    {
+        o.QueryDelay = TimeSpan.FromSeconds(10);
+
+        o.UsePostgres();
+        o.UseBusOutbox();
+    });
+
     x.UsingRabbitMq(
         (context, cfg) =>
         {

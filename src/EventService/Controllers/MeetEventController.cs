@@ -59,12 +59,12 @@ public class MeetEventController : ControllerBase
 
         var result = await _context.SaveChangesAsync() > 0;
 
+        if (!result)
+            return BadRequest("Could not create meet event");
+
         var meetEventMessage = _mapper.Map<MeetEventCreated>(MappedMeetEvent);
 
         await _publishEndpoint.Publish(meetEventMessage);
-
-        if (!result)
-            return BadRequest("Could not create meet event");
 
         return CreatedAtAction(
             nameof(GetMeetEventById),
