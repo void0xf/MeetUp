@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Contracts;
 using EventService.Data;
 using EventService.DTOs;
 using EventService.Models;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,11 +15,17 @@ public class MeetEventController : ControllerBase
 {
     private readonly MeetEventDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public MeetEventController(MeetEventDbContext context, IMapper mapper)
+    public MeetEventController(
+        MeetEventDbContext context,
+        IMapper mapper,
+        IPublishEndpoint publishEndpoint
+    )
     {
         _context = context;
         _mapper = mapper;
+        _publishEndpoint = publishEndpoint;
     }
 
     [HttpGet]
@@ -50,6 +58,10 @@ public class MeetEventController : ControllerBase
         _context.MeetEvents.Add(MappedMeetEvent);
 
         var result = await _context.SaveChangesAsync() > 0;
+
+        var meetEventMessage = _mapper.Map<MeetEventCreated>(MappedMeetEvent);
+
+        await _publishEndpoint.Publish(meetEventMessage);
 
         if (!result)
             return BadRequest("Could not create meet event");

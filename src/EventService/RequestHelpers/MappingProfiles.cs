@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Contracts;
 using EventService.DTOs;
 using EventService.Models;
 
@@ -10,5 +11,6 @@ public class MappingProfiles : Profile
     {
         CreateMap<MeetEvent, MeetEventDto>();
         CreateMap<CreateMeetEventDto, MeetEvent>();
+        CreateMap<MeetEvent, MeetEventCreated>();
     }
 }
