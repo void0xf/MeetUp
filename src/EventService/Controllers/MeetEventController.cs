@@ -89,6 +89,10 @@ public class MeetEventController : ControllerBase
         MeetEventToUpdate.Images = updateMeetEvent.Images;
         MeetEventToUpdate.Location = updateMeetEvent.Location;
 
+        var meetEventMessage = _mapper.Map<MeetEventUpdated>(MeetEventToUpdate);
+
+        await _publishEndpoint.Publish(meetEventMessage);
+
         var result = await _context.SaveChangesAsync() > 0;
         if (result)
             return Ok();
@@ -104,6 +108,10 @@ public class MeetEventController : ControllerBase
             return NotFound("");
 
         _context.MeetEvents.Remove(MeetEvent);
+
+        var meetEventMessage = _mapper.Map<MeetEventDeleted>(MeetEvent);
+
+        await _publishEndpoint.Publish(meetEventMessage);
 
         var result = await _context.SaveChangesAsync() > 0;
 

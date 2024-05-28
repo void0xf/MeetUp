@@ -9,6 +9,8 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumersFromNamespaceContaining<MeetEventCreatedConsumer>();
+    x.AddConsumersFromNamespaceContaining<MeetEventUpdatedConsumer>();
+    x.AddConsumersFromNamespaceContaining<MeetEventDeletedConsumer>();
 
     x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("search", false));
 

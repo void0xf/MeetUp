@@ -12,5 +12,7 @@ public class MappingProfiles : Profile
         CreateMap<MeetEvent, MeetEventDto>();
         CreateMap<CreateMeetEventDto, MeetEvent>();
         CreateMap<MeetEvent, MeetEventCreated>();
+        CreateMap<MeetEvent, MeetEventUpdated>();
+        CreateMap<MeetEvent, MeetEventDeleted>();
     }
 }
