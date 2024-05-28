@@ -46,53 +46,5 @@
       "bbq1.jpg",
       "bbq2.jpg"
     ]
-  },
-  {
-    "id": "0f70fc4b-1d50-48c7-aaaf-feed88fe758a",
-    "title": "Just new Meetup",
-    "description": "lazy desc",
-    "createdAt": "2024-05-26T16:55:33.078061Z",
-    "updatedAt": "2024-05-26T16:55:33.078061Z",
-    "eventStartDate": "2024-06-01T10:00:00Z",
-    "eventEndDate": "2024-06-01T18:00:00Z",
-    "location": "City Hall2",
-    "author": "Test",
-    "visibility": "Public",
-    "images": [
-      "image1.jpg",
-      "image2.jpg"
-    ]
-  },
-  {
-    "id": "3d343121-d6c2-450d-a647-4a8d793890d0",
-    "title": "Just new Meetup",
-    "description": "lazy desc",
-    "createdAt": "2024-05-26T17:00:11.937649Z",
-    "updatedAt": "2024-05-26T17:00:11.937649Z",
-    "eventStartDate": "2024-06-01T10:00:00Z",
-    "eventEndDate": "2024-06-01T18:00:00Z",
-    "location": "City Hall2",
-    "author": "Test",
-    "visibility": "Public",
-    "images": [
-      "image1.jpg",
-      "image2.jpg"
-    ]
-  },
-  {
-    "id": "7275df34-0116-49db-aa10-965c02bbb86c",
-    "title": "Just new Meetup",
-    "description": "lazy desc",
-    "createdAt": "2024-05-26T17:00:30.995731Z",
-    "updatedAt": "2024-05-26T17:00:30.995731Z",
-    "eventStartDate": "2024-06-01T10:00:00Z",
-    "eventEndDate": "2024-06-01T18:00:00Z",
-    "location": "City Hall2",
-    "author": "Test",
-    "visibility": "Public",
-    "images": [
-      "image1.jpg",
-      "image2.jpg"
-    ]
   }
 ]
