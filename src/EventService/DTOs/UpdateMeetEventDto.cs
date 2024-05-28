@@ -20,6 +20,9 @@ public class UpdateMeetEventDto
     public DateTime EventEndDate { get; set; }
 
     [Required]
+    public string Author { get; set; }
+
+    [Required]
     public string Location { get; set; }
 
     [Required]

@@ -4,6 +4,7 @@ using EventService.Data;
 using EventService.DTOs;
 using EventService.Models;
 using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,6 +47,7 @@ public class MeetEventController : ControllerBase
         return Ok(MeetEvent);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<CreateMeetEventDto>> CreateMeetEvent(
         CreateMeetEventDto createMeetEvent
@@ -53,7 +55,7 @@ public class MeetEventController : ControllerBase
     {
         var MappedMeetEvent = _mapper.Map<MeetEvent>(createMeetEvent);
 
-        MappedMeetEvent.Author = "Test";
+        MappedMeetEvent.Author = User.Identity.Name;
 
         _context.MeetEvents.Add(MappedMeetEvent);
 
@@ -73,9 +75,13 @@ public class MeetEventController : ControllerBase
         );
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateMeetEvent(UpdateMeetEventDto updateMeetEvent)
     {
+        if (updateMeetEvent.Author != User.Identity.Name)
+            return Forbid();
+
         var MeetEventToUpdate = await _context.MeetEvents.FirstOrDefaultAsync(me =>
             me.Id == updateMeetEvent.Id
         );
@@ -100,10 +106,15 @@ public class MeetEventController : ControllerBase
         return BadRequest("Problem with saving changes");
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteMeetEvent(Guid id)
     {
         var MeetEvent = await _context.MeetEvents.FirstAsync(me => me.Id == id);
+
+        if (MeetEvent.Author != User.Identity.Name)
+            return Forbid();
+
         if (MeetEvent == null)
             return NotFound("");
 
