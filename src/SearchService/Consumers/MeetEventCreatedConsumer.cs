@@ -17,7 +17,7 @@ public class MeetEventCreatedConsumer : IConsumer<MeetEventCreated>
 
     public async Task Consume(ConsumeContext<MeetEventCreated> context)
     {
-        Console.WriteLine("Cosuming message", context.Message);
+        Console.WriteLine("Cosuming 'Create' message", context.Message.Id);
         var item = _mapper.Map<Item>(context.Message);
         await item.SaveAsync();
     }
