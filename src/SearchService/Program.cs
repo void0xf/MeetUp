@@ -15,6 +15,14 @@ builder.Services.AddMassTransit(x =>
     x.UsingRabbitMq(
         (context, cfg) =>
         {
+            cfg.ReceiveEndpoint(
+                "search-meet-event-created",
+                e =>
+                {
+                    e.UseMessageRetry(r => r.Interval(5, 5));
+                    e.ConfigureConsumer<MeetEventCreatedConsumer>(context);
+                }
+            );
             cfg.ConfigureEndpoints(context);
         }
     );
