@@ -41,10 +41,12 @@ public class MeetEventController : ControllerBase
     public async Task<ActionResult<MeetEventDto>> GetMeetEventById(Guid id)
     {
         var MeetEvent = await _context.MeetEvents.FirstOrDefaultAsync(x => x.Id == id);
-        if (MeetEvent == null)
+        var dtoMeetEvent = _mapper.Map<MeetEventDto>(MeetEvent);
+
+        if (dtoMeetEvent == null)
             return NotFound();
 
-        return Ok(MeetEvent);
+        return Ok(dtoMeetEvent);
     }
 
     [Authorize]
