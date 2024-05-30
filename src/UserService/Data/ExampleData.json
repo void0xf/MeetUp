@@ -1,0 +1,18 @@
+﻿[
+  {
+    "Description": "A friendly guy who loves sports.",
+    "Fullname": "Bob Smith",
+    "username": "bob",
+    "WhoCanMessage": "Friends",
+    "ChatsId": [
+    ]
+  },
+  {
+    "Description": "A creative girl with a passion for art.",
+    "Fullname": "Alice Johnson",
+    "username": "alice",
+    "WhoCanMessage": "Public",
+    "ChatsId": [
+    ]
+  }
+]

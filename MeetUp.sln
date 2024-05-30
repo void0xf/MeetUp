@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdentityService", "src\Iden
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GatewayService", "src\GatewayService\GatewayService.csproj", "{96F2CC9B-B68D-4942-847E-955A81C1B280}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Maui", "Client.Maui\Client.Maui.csproj", "{FEEEF441-BDD3-4E29-AC30-5A18E4F87196}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client.Maui", "Client.Maui\Client.Maui.csproj", "{FEEEF441-BDD3-4E29-AC30-5A18E4F87196}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserService", "src\UserService\UserService.csproj", "{68881CE6-EEA1-49B0-B47E-CB80F93D02BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +54,10 @@ Global
 		{FEEEF441-BDD3-4E29-AC30-5A18E4F87196}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEEEF441-BDD3-4E29-AC30-5A18E4F87196}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FEEEF441-BDD3-4E29-AC30-5A18E4F87196}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{68881CE6-EEA1-49B0-B47E-CB80F93D02BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68881CE6-EEA1-49B0-B47E-CB80F93D02BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68881CE6-EEA1-49B0-B47E-CB80F93D02BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68881CE6-EEA1-49B0-B47E-CB80F93D02BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{CEE2DCBC-EA6B-44D7-A357-02A1A4DDEA70} = {54CB69EA-B995-4A41-BD4F-74DA6063F192}
 		{96F2CC9B-B68D-4942-847E-955A81C1B280} = {54CB69EA-B995-4A41-BD4F-74DA6063F192}
 		{FEEEF441-BDD3-4E29-AC30-5A18E4F87196} = {54CB69EA-B995-4A41-BD4F-74DA6063F192}
+		{68881CE6-EEA1-49B0-B47E-CB80F93D02BD} = {54CB69EA-B995-4A41-BD4F-74DA6063F192}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {46E15C0A-B57C-434E-AAC9-9C106F5D3831}
