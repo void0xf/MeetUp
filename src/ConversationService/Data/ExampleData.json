@@ -1,0 +1,44 @@
+﻿[
+  {
+    "IsDM": true,
+    "Participants": [ "Bob", "Alice" ],
+    "Messages": [
+      {
+        "Sender": "Bob",
+        "Content": "Hi Alice, how are you?",
+        "Timestamp": "2024-05-30T12:00:00Z"
+      },
+      {
+        "Sender": "Alice",
+        "Content": "Hi Bob! I'm doing well, thanks. How about you?",
+        "Timestamp": "2024-05-30T12:01:00Z"
+      },
+      {
+        "Sender": "Bob",
+        "Content": "I'm good, thanks for asking!",
+        "Timestamp": "2024-05-30T12:02:00Z"
+      }
+    ]
+  },
+  {
+    "IsDM": false,
+    "Participants": [ "Bob", "Alice", "Charlie" ],
+    "Messages": [
+      {
+        "Sender": "Alice",
+        "Content": "Hey everyone, are we meeting up tonight?",
+        "Timestamp": "2024-05-30T18:00:00Z"
+      },
+      {
+        "Sender": "Charlie",
+        "Content": "Yes, I'm up for it!",
+        "Timestamp": "2024-05-30T18:05:00Z"
+      },
+      {
+        "Sender": "Bob",
+        "Content": "Count me in too!",
+        "Timestamp": "2024-05-30T18:10:00Z"
+      }
+    ]
+  }
+]
