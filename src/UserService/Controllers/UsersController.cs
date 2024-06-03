@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Entities;
+using UserService.DTOs;
 using UserService.Models;
 
 namespace UserService.Controllers
@@ -11,7 +12,7 @@ namespace UserService.Controllers
     {
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<UserInfo>> Create(UserInfo userInfo)
+        public async Task<ActionResult<UserInfoDto>> Create(UserInfoDto userInfo)
         {
             var existingUserInfo = await DB.Find<UserInfo>()
                 .Match(u => u.Username == userInfo.Username)
@@ -20,8 +21,12 @@ namespace UserService.Controllers
             {
                 return BadRequest("User already exists");
             }
+            var createdUser = new UserInfo();
+            createdUser.Username = userInfo.Username;
+            createdUser.Fullname = userInfo.Fullname;
+            createdUser.Description = userInfo.Description;
 
-            await userInfo.SaveAsync();
+            await createdUser.SaveAsync();
             return CreatedAtAction(
                 nameof(GetByUsername),
                 new { username = userInfo.Username },
