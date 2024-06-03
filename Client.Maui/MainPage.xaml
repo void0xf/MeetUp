@@ -27,7 +27,7 @@
                     Padding="10"
                     Command="{Binding NaviageToSignUpCommand}"
                     Text="Sign Up" />
-                <Button Text="Already Have Account" />
+                <Button Command="{Binding NaviageToSignInCommand}" Text="Already Have Account" />
             </VerticalStackLayout>
         </FlexLayout>
     </ScrollView>

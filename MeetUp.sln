@@ -22,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client.Maui", "Client.Maui\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserService", "src\UserService\UserService.csproj", "{68881CE6-EEA1-49B0-B47E-CB80F93D02BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConversationService", "src\ConversationService\ConversationService.csproj", "{7F7B249C-42B0-40BA-A868-E1784F1EB0B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConversationService", "src\ConversationService\ConversationService.csproj", "{7F7B249C-42B0-40BA-A868-E1784F1EB0B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -9,6 +9,7 @@ namespace Client.Maui
             InitializeComponent();
 
             Routing.RegisterRoute(nameof(SignUpPage), typeof(SignUpPage));
+            Routing.RegisterRoute(nameof(SignInPage), typeof(SignInPage));
         }
     }
 }

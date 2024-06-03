@@ -1,5 +1,10 @@
-﻿using Client.Maui.Store;
+﻿using Client.Maui.Api.Auth;
+using Client.Maui.Api.Users;
+using Client.Maui.Pages;
+using Client.Maui.Store;
+using Client.Maui.ViewModels;
 using Microsoft.Extensions.Logging;
+using Refit;
 
 namespace Client.Maui
 {
@@ -15,10 +20,22 @@ namespace Client.Maui
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-            /*builder
-                .Services.AddRefitClient<IAuth>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:5000"));*/
+
             builder.Services.AddSingleton<UserStore>();
+
+            builder
+                .Services.AddRefitClient<IAuth>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://10.0.2.2:6001"));
+
+            builder
+                .Services.AddRefitClient<IUserApi>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://10.0.2.2:6001"));
+
+            builder.Services.AddTransient<SignUpViewModel>();
+            builder.Services.AddTransient<SignInPageViewModel>();
+
+            builder.Services.AddTransient<SignUpPage>();
+            builder.Services.AddTransient<SignInPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();

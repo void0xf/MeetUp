@@ -2,11 +2,11 @@ using Client.Maui.ViewModels;
 
 namespace Client.Maui.Pages;
 
-public partial class SignUpPage : ContentPage
+public partial class SignInPage : ContentPage
 {
-    public SignUpPage()
+    public SignInPage(SignInPageViewModel signInViewModel)
     {
         InitializeComponent();
-        BindingContext = new SignInPageViewModel();
+        BindingContext = signInViewModel;
     }
 }

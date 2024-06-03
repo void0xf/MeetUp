@@ -7,6 +7,12 @@ namespace Client.Maui.ViewModels
     public partial class MainPageViewModel : ObservableObject
     {
         [RelayCommand]
+        async void NaviageToSignIn()
+        {
+            await Shell.Current.GoToAsync(nameof(SignInPage));
+        }
+
+        [RelayCommand]
         async void NaviageToSignUp()
         {
             await Shell.Current.GoToAsync(nameof(SignUpPage));
