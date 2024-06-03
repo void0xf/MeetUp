@@ -8,6 +8,7 @@ Log.Information("Starting up");
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+    builder.Services.AddControllers();
 
     builder.Host.UseSerilog(
         (ctx, lc) =>
@@ -24,6 +25,7 @@ try
     // this seeding is only for the template to bootstrap the DB and users.
     // in production you will likely want a different approach.
     SeedData.EnsureSeedData(app);
+    app.MapControllers();
 
     app.Run();
 }
