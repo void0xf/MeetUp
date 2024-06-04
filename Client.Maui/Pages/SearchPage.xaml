@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Client.Maui.Pages.SearchPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:EventModel="clr-namespace:Client.Maui.Api"
+    xmlns:vm="clr-namespace:Client.Maui.ViewModels"
+    Title="SearchPage"
+    x:DataType="vm:SearchViewModel">
+
+
+    <StackLayout Padding="10">
+        <SearchBar
+            Placeholder="Search for events..."
+            SearchCommand="{Binding SearchEventsCommand}"
+            Text="{Binding SearchTerm}" />
+
+        <Label
+            Margin="0,10,0,0"
+            FontAttributes="Bold"
+            FontSize="Medium"
+            Text="Results" />
+
+        <CollectionView
+            ItemsSource="{Binding Results}"
+            SelectedItem="{Binding SelectedEvent}"
+            SelectionChangedCommand="{Binding SelectEventCommand}"
+            SelectionMode="Single">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type EventModel:Event}">
+                    <StackLayout Padding="10">
+                        <Label
+                            FontAttributes="Bold"
+                            FontSize="Large"
+                            Text="{Binding Title}" />
+                        <Label FontSize="Medium" Text="{Binding Description}" />
+                        <Label FontSize="Small" Text="{Binding Location}" />
+                        <Label FontSize="Small" Text="{Binding EventStartDate, StringFormat='Event Date: {0:MM/dd/yyyy hh:mm tt}'}" />
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </StackLayout>
+</ContentPage>

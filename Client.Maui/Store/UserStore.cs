@@ -4,10 +4,6 @@
     {
         public string Username { get; set; }
         public string AccessToken { get; set; }
-
-        public UserStore()
-        {
-            // Initialize properties if needed
-        }
+        public bool IsLoggedIn { get; set; }
     }
 }

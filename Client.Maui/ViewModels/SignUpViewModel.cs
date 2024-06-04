@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Client.Maui.Api.Auth;
 using Client.Maui.Api.Users;
+using Client.Maui.Pages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -74,6 +75,7 @@ namespace Client.Maui.ViewModels
                         "Sign up successful!",
                         "OK"
                     );
+                    await Shell.Current.GoToAsync(nameof(BrowseEventsPage));
                 }
                 else
                 {

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Client.Maui.Pages.BrowseEventsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Client.Maui.ViewModels"
+    Title="BrowseEventsPage"
+    x:DataType="vm:BrowseEventsViewModel">
+    <VerticalStackLayout>
+        <Button Command="{Binding NavigateToSearchPageCommand}" Text="Search For Events" />
+        <Label Text="Search Events nearby" />
+        <Label Text="See Events by date" />
+        <Button Text="Find group, that you like" />
+        <Label Text="Discover Meetup" />
+        <Label Text="Popular by now" />
+    </VerticalStackLayout>
+</ContentPage>

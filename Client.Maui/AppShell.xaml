@@ -4,8 +4,27 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Client.Maui"
+    xmlns:pages="clr-namespace:Client.Maui.Pages"
+    xmlns:vm="clr-namespace:Client.Maui.ViewModels"
     Title="Client.Maui"
+    x:DataType="vm:AppShellViewModel"
     Shell.FlyoutBehavior="Disabled">
+
+    <TabBar IsVisible="{Binding IsBottomBarVisible}">
+        <Tab Title="Events">
+            <ShellContent
+                Title="Home"
+                ContentTemplate="{DataTemplate local:MainPage}"
+                Route="MainPage" />
+        </Tab>
+        <Tab Title="Chats">
+            <ShellContent
+                Title="Home"
+                ContentTemplate="{DataTemplate pages:ChatPage}"
+                Route="MainPage" />
+        </Tab>
+
+    </TabBar>
 
     <ShellContent
         Title="Home"

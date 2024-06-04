@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Client.Maui.Api.Auth;
 using Client.Maui.Api.Users;
+using Client.Maui.Pages;
 using Client.Maui.Store;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -73,7 +74,7 @@ public partial class SignInPageViewModel : ObservableObject
                 );
                 if (fetchedUser != null)
                 {
-                    //Navigate to App
+                    await Shell.Current.GoToAsync(nameof(BrowseEventsPage));
                 }
                 ErrorMessage = "Couldn't retrieve user info";
 
