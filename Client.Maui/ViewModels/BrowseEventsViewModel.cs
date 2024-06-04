@@ -2,13 +2,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Client.Maui.ViewModels;
-
-public partial class BrowseEventsViewModel : ObservableObject
+namespace Client.Maui.ViewModels
 {
-    [RelayCommand]
-    async void NavigateToSearchPage()
+    public partial class BrowseEventsViewModel : ObservableObject
     {
-        await Shell.Current.GoToAsync(nameof(SearchPage));
+        [RelayCommand]
+        public async Task NavigateToSearchPageAsync()
+        {
+            await Shell.Current.GoToAsync(nameof(SearchPage));
+        }
     }
 }

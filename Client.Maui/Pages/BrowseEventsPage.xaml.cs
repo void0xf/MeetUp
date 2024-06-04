@@ -1,12 +1,16 @@
 using Client.Maui.ViewModels;
 
-namespace Client.Maui.Pages;
-
-public partial class BrowseEventsPage : ContentPage
+namespace Client.Maui.Pages
 {
-    public BrowseEventsPage(BrowseEventsViewModel browseEventsViewModel)
+    public partial class BrowseEventsPage : ContentPage
     {
-        InitializeComponent();
-        BindingContext = browseEventsViewModel;
+        private readonly BrowseEventsViewModel _viewModel;
+
+        public BrowseEventsPage(BrowseEventsViewModel viewModel)
+        {
+            InitializeComponent();
+            BindingContext = viewModel;
+            _viewModel = viewModel;
+        }
     }
 }

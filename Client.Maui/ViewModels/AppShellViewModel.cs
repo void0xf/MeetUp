@@ -5,7 +5,7 @@ namespace Client.Maui.ViewModels;
 public partial class AppShellViewModel : ObservableObject
 {
     [ObservableProperty]
-    private bool isBottomBarVisible = true;
+    private bool isBottomBarVisible = false;
 
     public AppShellViewModel() { }
 }

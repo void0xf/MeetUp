@@ -39,8 +39,10 @@ namespace Client.Maui
             builder.Services.AddTransient<SignInPageViewModel>();
             builder.Services.AddTransient<SearchViewModel>();
             builder.Services.AddTransient<BrowseEventsViewModel>();
+            builder.Services.AddSingleton<AppShellViewModel>();
 
             builder.Services.AddTransient<BrowseEventsPage>();
+            builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<SignUpPage>();
             builder.Services.AddTransient<SignInPage>();
             builder.Services.AddTransient<SearchPage>();

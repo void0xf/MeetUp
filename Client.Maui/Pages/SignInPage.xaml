@@ -9,6 +9,7 @@
     <VerticalStackLayout>
         <Entry Placeholder="Username" Text="{Binding Username}" />
         <Entry Placeholder="Password" Text="{Binding Password}" />
+        <Label Text="{Binding ErrorMessage}" />
         <Button Command="{Binding SignInCommand}" Text="Sign Up" />
     </VerticalStackLayout>
 </ContentPage>

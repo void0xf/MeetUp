@@ -7,28 +7,29 @@
     xmlns:pages="clr-namespace:Client.Maui.Pages"
     xmlns:vm="clr-namespace:Client.Maui.ViewModels"
     Title="Client.Maui"
-    x:DataType="vm:AppShellViewModel"
-    Shell.FlyoutBehavior="Disabled">
+    x:DataType="vm:AppShellViewModel">
 
-    <TabBar IsVisible="{Binding IsBottomBarVisible}">
+
+    <ShellContent
+        Title="MainPage"
+        ContentTemplate="{DataTemplate local:MainPage}"
+        IsEnabled="False"
+        Route="MainPage" />
+    <TabBar Route="App">
         <Tab Title="Events">
             <ShellContent
-                Title="Home"
-                ContentTemplate="{DataTemplate local:MainPage}"
-                Route="MainPage" />
+                Title="Events"
+                ContentTemplate="{DataTemplate pages:BrowseEventsPage}"
+                Route="BrowseEventsPage"
+                Shell.TabBarIsVisible="True" />
         </Tab>
         <Tab Title="Chats">
             <ShellContent
                 Title="Home"
                 ContentTemplate="{DataTemplate pages:ChatPage}"
-                Route="MainPage" />
+                Route="ChatPage"
+                Shell.TabBarIsVisible="True" />
         </Tab>
-
     </TabBar>
-
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
 
 </Shell>

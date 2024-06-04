@@ -7,14 +7,30 @@
     Title="Event Detail"
     x:DataType="vm:EventDetailViewModel">
 
-    <StackLayout Padding="10">
-        <Label
-            FontAttributes="Bold"
-            FontSize="Large"
-            Text="{Binding Event.Title}" />
-        <Label FontSize="Medium" Text="{Binding Event.Description}" />
-        <Label FontSize="Small" Text="{Binding Event.Location}" />
-        <Label FontSize="Small" Text="{Binding Event.EventStartDate, StringFormat='Event Date: {0:MM/dd/yyyy hh:mm tt}'}" />
-        <Label FontSize="Small" Text="{Binding Event.Author}" />
-    </StackLayout>
+    <Grid RowDefinitions="*, Auto">
+
+
+        <ScrollView Grid.Row="0">
+            <StackLayout>
+                <Label
+                    FontAttributes="Bold"
+                    FontSize="Large"
+                    Text="{Binding Event.Title}" />
+                <Label FontSize="Medium" Text="{Binding Event.Description}" />
+                <Label FontSize="Small" Text="{Binding Event.Location}" />
+                <Label FontSize="Small" Text="{Binding Event.EventStartDate, StringFormat='Event Date: {0:MM/dd/yyyy hh:mm tt}'}" />
+                <Label FontSize="Small" Text="{Binding Event.Author}" />
+            </StackLayout>
+        </ScrollView>
+
+
+        <StackLayout Grid.Row="1" Background="Gray">
+            <Grid ColumnDefinitions="*, *">
+                <Label Grid.Column="0" Text="Free" />
+
+                <Button Grid.Column="1" Text="Join" />
+            </Grid>
+            <FlexLayout Direction="Row" JustifyContent="SpaceBetween" />
+        </StackLayout>
+    </Grid>
 </ContentPage>

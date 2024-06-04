@@ -5,7 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Client.Maui.ViewModels"
     Title="BrowseEventsPage"
-    x:DataType="vm:BrowseEventsViewModel">
+    x:DataType="vm:BrowseEventsViewModel"
+    NavigationPage.HasNavigationBar="False">
     <VerticalStackLayout>
         <Button Command="{Binding NavigateToSearchPageCommand}" Text="Search For Events" />
         <Label Text="Search Events nearby" />

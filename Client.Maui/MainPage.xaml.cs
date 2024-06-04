@@ -4,10 +4,10 @@ namespace Client.Maui
 {
     public partial class MainPage : ContentPage
     {
-        public MainPage()
+        public MainPage(AppShellViewModel viewModel)
         {
             InitializeComponent();
-            BindingContext = new MainPageViewModel();
+            BindingContext = new MainPageViewModel(viewModel);
         }
     }
 }

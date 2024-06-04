@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using Client.Maui.Api.Auth;
 using Client.Maui.Api.Users;
-using Client.Maui.Pages;
 using Client.Maui.Store;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -38,8 +37,8 @@ public partial class SignInPageViewModel : ObservableObject
         var authTokenRequest = new AuthTokenRequest
         {
             grant_type = "password",
-            username = "alice",
-            password = "Pass123$",
+            username = $"alice",
+            password = $"Pass123$",
             client_id = "postman",
             client_secret = "NotASecret",
             scope = "meetEventApp openid profile"
@@ -74,7 +73,7 @@ public partial class SignInPageViewModel : ObservableObject
                 );
                 if (fetchedUser != null)
                 {
-                    await Shell.Current.GoToAsync(nameof(BrowseEventsPage));
+                    await Shell.Current.GoToAsync("//App");
                 }
                 ErrorMessage = "Couldn't retrieve user info";
 
