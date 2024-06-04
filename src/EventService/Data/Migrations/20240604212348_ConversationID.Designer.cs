@@ -4,17 +4,20 @@ using System.Collections.Generic;
 using EventService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace EventService.Data.Migrations
+namespace EventService.Data.migrations
 {
     [DbContext(typeof(MeetEventDbContext))]
-    partial class MeetEventDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240604212348_ConversationID")]
+    partial class ConversationID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
