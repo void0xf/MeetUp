@@ -50,6 +50,33 @@ public class MeetEventController : ControllerBase
     }
 
     [Authorize]
+    [HttpPost("AddUserToParticipantList/{meetEventId}")]
+    public async Task<ActionResult> AddUserToParticipantList(string meetEventId)
+    {
+        var meetEventToUpdate = await _context.MeetEvents.FirstAsync(m =>
+            m.Id.ToString() == meetEventId
+        );
+        if (meetEventToUpdate == null)
+            return NotFound();
+
+        var message = new MeetEventParticipantAdded();
+        message.ConversationId = meetEventToUpdate.ConversationId;
+        message.ParticipantUsername = User.Identity.Name;
+
+        _publishEndpoint.Publish(message);
+
+        if (meetEventToUpdate.Participants == null)
+        {
+            meetEventToUpdate.Participants = new List<string>();
+        }
+        meetEventToUpdate.Participants.Add(User.Identity.Name);
+
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<CreateMeetEventDto>> CreateMeetEvent(
         CreateMeetEventDto createMeetEvent

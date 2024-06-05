@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumersFromNamespaceContaining<MeetEventCreatedConsumer>();
+    x.AddConsumersFromNamespaceContaining<MeetEventParticipantAddedConsumer>();
 
     x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("conversation", false));
 
