@@ -1,4 +1,29 @@
+using ConversationService.Consumers;
+using MassTransit;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumersFromNamespaceContaining<MeetEventCreatedConsumer>();
+
+    x.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("conversation", false));
+
+    x.UsingRabbitMq(
+        (context, cfg) =>
+        {
+            cfg.ReceiveEndpoint(
+                "conversation-meet-event-created",
+                e =>
+                {
+                    e.UseMessageRetry(r => r.Interval(5, 5));
+                    e.ConfigureConsumer<MeetEventCreatedConsumer>(context);
+                }
+            );
+            cfg.ConfigureEndpoints(context);
+        }
+    );
+});
 
 builder.Services.AddSignalR();
 builder.Services.AddControllers();

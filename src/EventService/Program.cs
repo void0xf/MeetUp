@@ -1,3 +1,4 @@
+using EventService.Consumers;
 using EventService.Data;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<MeetEventDbContext>(opt =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddMassTransit(x =>
 {
+    x.AddConsumer<ConversationCreatedConsumer>();
+
     //outbox when incase message will not be delivered
     x.AddEntityFrameworkOutbox<MeetEventDbContext>(o =>
     {
