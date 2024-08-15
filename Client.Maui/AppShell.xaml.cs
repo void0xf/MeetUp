@@ -15,6 +15,7 @@ namespace Client.Maui
             Routing.RegisterRoute(nameof(BrowseEventsPage), typeof(BrowseEventsPage));
             Routing.RegisterRoute(nameof(EventDetailPage), typeof(EventDetailPage));
             Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+            Routing.RegisterRoute(nameof(CreateEventPage), typeof(CreateEventPage));
         }
     }
 }
