@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Client.Maui.Pages.CreateEventPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:Client.Maui.ViewModels"
+    Title="Create Event"
+    x:DataType="vm:CreateEventViewModel">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            <Label
+                FontAttributes="Bold"
+                FontSize="24"
+                HorizontalOptions="Center"
+                Text="Create New Event"
+                TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                            Dark={StaticResource PrimaryDark}}" />
+            <Frame
+                Padding="15"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                                  Dark={StaticResource Gray800}}"
+                CornerRadius="10">
+                <VerticalStackLayout Spacing="15">
+                    <Entry
+                        Placeholder="Title"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Title}" />
+                    <Editor
+                        HeightRequest="100"
+                        Placeholder="Description"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Description}" />
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="Start Date and Time" />
+                    <HorizontalStackLayout Spacing="10">
+                        <DatePicker Date="{Binding EventStartDate}" HorizontalOptions="FillAndExpand" />
+                        <TimePicker HorizontalOptions="FillAndExpand" Time="{Binding EventStartTime}" />
+                    </HorizontalStackLayout>
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        Text="End Date and Time" />
+                    <HorizontalStackLayout Spacing="10">
+                        <DatePicker Date="{Binding EventEndDate}" HorizontalOptions="FillAndExpand" />
+                        <TimePicker HorizontalOptions="FillAndExpand" Time="{Binding EventEndTime}" />
+                    </HorizontalStackLayout>
+                    <Entry
+                        Placeholder="Location"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Location}" />
+                    <Entry
+                        Placeholder="Author"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Author}" />
+                    <Picker
+                        Title="Visibility"
+                        ItemsSource="{Binding VisibilityOptions}"
+                        SelectedItem="{Binding Visibility}"
+                        TitleColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                     Dark={StaticResource Gray600}}" />
+                </VerticalStackLayout>
+            </Frame>
+            <Button
+                BackgroundColor="{AppThemeBinding Light={StaticResource Secondary},
+                                                  Dark={StaticResource SecondaryDark}}"
+                Command="{Binding AddImageCommand}"
+                CornerRadius="5"
+                HeightRequest="50"
+                Text="Add Image"
+                TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                            Dark={StaticResource PrimaryDark}}" />
+            <CollectionView HeightRequest="100" ItemsSource="{Binding Images}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout ItemSpacing="10" Orientation="Horizontal" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Image
+                            Aspect="AspectFill"
+                            HeightRequest="100"
+                            Source="{Binding}"
+                            WidthRequest="100" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button
+                BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                  Dark={StaticResource PrimaryDark}}"
+                Command="{Binding CreateEventCommand}"
+                CornerRadius="5"
+                FontAttributes="Bold"
+                HeightRequest="50"
+                Text="Create Event"
+                TextColor="White" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
