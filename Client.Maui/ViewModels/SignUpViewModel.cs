@@ -34,6 +34,12 @@ namespace Client.Maui.ViewModels
         private string fullname;
 
         [RelayCommand]
+        public async Task NavigateToSignIn()
+        {
+            await Shell.Current.GoToAsync(nameof(SignInPage));
+        }
+
+        [RelayCommand]
         private async Task SignUp()
         {
             var userIdentity = new IdentityUserInfo();

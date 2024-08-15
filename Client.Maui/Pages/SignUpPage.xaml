@@ -4,29 +4,70 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Client.Maui.ViewModels"
-    Title="SignUpPage"
+    Title="Sign Up"
     x:DataType="vm:SignUpViewModel">
-
     <ScrollView>
-        <StackLayout Padding="20" Spacing="15">
+        <VerticalStackLayout Padding="30" Spacing="20">
             <Label
-                FontSize="24"
+                FontAttributes="Bold"
+                FontSize="28"
                 HorizontalOptions="Center"
-                Text="Sign Up" />
-
-            <Entry Placeholder="Username" Text="{Binding Username}" />
-            <Entry
-                Keyboard="Email"
-                Placeholder="Email"
-                Text="{Binding Email}" />
-            <Entry
-                IsPassword="True"
-                Placeholder="Password"
-                Text="{Binding Password}" />
-            <Entry Placeholder="Description" Text="{Binding Description}" />
-            <Entry Placeholder="Full Name" Text="{Binding Fullname}" />
-
-            <Button Command="{Binding SignUpCommand}" Text="Sign Up" />
-        </StackLayout>
+                Text="Create Account"
+                TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                            Dark={StaticResource PrimaryDark}}" />
+            <Frame
+                Padding="15"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                                  Dark={StaticResource Gray800}}"
+                CornerRadius="10">
+                <VerticalStackLayout Spacing="15">
+                    <Entry
+                        Placeholder="Username"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Username}" />
+                    <Entry
+                        Keyboard="Email"
+                        Placeholder="Email"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Email}" />
+                    <Entry
+                        IsPassword="True"
+                        Placeholder="Password"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Password}" />
+                    <Entry
+                        Placeholder="Full Name"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Fullname}" />
+                    <Editor
+                        HeightRequest="100"
+                        Placeholder="Description"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Description}" />
+                </VerticalStackLayout>
+            </Frame>
+            <Button
+                BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                  Dark={StaticResource PrimaryDark}}"
+                Command="{Binding SignUpCommand}"
+                CornerRadius="5"
+                FontAttributes="Bold"
+                HeightRequest="50"
+                Text="Sign Up"
+                TextColor="White" />
+            <Label
+                FontSize="14"
+                HorizontalOptions="Center"
+                Text="Already have an account? Sign In">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateToSignInCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
