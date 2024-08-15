@@ -3,33 +3,100 @@
     x:Class="Client.Maui.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:behaviors="clr-namespace:Client.Maui.Behaviors"
     xmlns:vm="clr-namespace:Client.Maui.ViewModels"
     x:DataType="vm:MainPageViewModel"
+    BackgroundColor="{AppThemeBinding Light={StaticResource White},
+                                      Dark={StaticResource Gray900}}"
     NavigationPage.HasNavigationBar="False"
     Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <FlexLayout
-            Padding="10"
-            AlignItems="Center"
-            Direction="Column"
-            JustifyContent="SpaceBetween">
-            <VerticalStackLayout Margin="10">
-                <Button Text="Preview" />
-                <Label Text="MeetUp" />
-                <Label Text="Explore Horizons." />
-            </VerticalStackLayout>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="TitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="36" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+            </Style>
+            <Style x:Key="SubtitleStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray300}}" />
+            </Style>
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="CornerRadius" Value="25" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Padding" Value="20,10" />
+                <Setter Property="Margin" Value="0,10" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
+    <Grid
+        Padding="20"
+        RowDefinitions="Auto,*,Auto"
+        RowSpacing="20">
+        <!--  Top section  -->
+        <VerticalStackLayout Grid.Row="0" Spacing="10">
+            <Button
+                BackgroundColor="Transparent"
+                FontSize="14"
+                HorizontalOptions="End"
+                Style="{StaticResource ButtonStyle}"
+                Text="Preview"
+                TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                            Dark={StaticResource White}}">
+                <Button.Behaviors>
+                    <behaviors:FadeInBehavior Delay="0" Duration="500" />
+                </Button.Behaviors>
+            </Button>
+        </VerticalStackLayout>
 
-            <VerticalStackLayout Margin="10">
-                <Button
-                    Margin="10"
-                    Padding="10"
-                    Command="{Binding NaviageToSignUpCommand}"
-                    Text="Sign Up" />
-                <Button Command="{Binding NaviageToSignInCommand}" Text="Already Have Account" />
-            </VerticalStackLayout>
-        </FlexLayout>
-    </ScrollView>
+        <!--  Middle section  -->
+        <VerticalStackLayout
+            Grid.Row="1"
+            Spacing="10"
+            VerticalOptions="Center">
+            <Label Style="{StaticResource TitleStyle}" Text="MeetUp">
+                <Label.Behaviors>
+                    <behaviors:FadeInBehavior Delay="200" Duration="800" />
+                </Label.Behaviors>
+            </Label>
+            <Label Style="{StaticResource SubtitleStyle}" Text="Explore Horizons.">
+                <Label.Behaviors>
+                    <behaviors:FadeInBehavior Delay="400" Duration="800" />
+                </Label.Behaviors>
+            </Label>
+        </VerticalStackLayout>
 
+        <!--  Bottom section  -->
+        <VerticalStackLayout Grid.Row="2" Spacing="10">
+            <Button
+                BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                  Dark={StaticResource PrimaryDark}}"
+                Command="{Binding NaviageToSignUpCommand}"
+                Style="{StaticResource ButtonStyle}"
+                Text="Sign Up"
+                TextColor="White">
+                <Button.Behaviors>
+                    <behaviors:FadeInBehavior Delay="600" Duration="500" />
+                </Button.Behaviors>
+            </Button>
+            <Button
+                BackgroundColor="Transparent"
+                BorderColor="{AppThemeBinding Light={StaticResource Primary},
+                                              Dark={StaticResource White}}"
+                BorderWidth="1"
+                Command="{Binding NaviageToSignInCommand}"
+                Style="{StaticResource ButtonStyle}"
+                Text="Already Have Account"
+                TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                            Dark={StaticResource White}}">
+                <Button.Behaviors>
+                    <behaviors:FadeInBehavior Delay="800" Duration="500" />
+                </Button.Behaviors>
+            </Button>
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>
