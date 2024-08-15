@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Client.Maui.Api.Auth;
 using Client.Maui.Api.Users;
+using Client.Maui.Pages;
 using Client.Maui.Store;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -32,13 +33,19 @@ public partial class SignInPageViewModel : ObservableObject
     private string _password;
 
     [RelayCommand]
+    public async Task NavigateToSignUp()
+    {
+        await Shell.Current.GoToAsync(nameof(SignInPage));
+    }
+
+    [RelayCommand]
     public async Task SignIn()
     {
         var authTokenRequest = new AuthTokenRequest
         {
             grant_type = "password",
-            username = $"alice",
-            password = $"Pass123$",
+            username = $"{Username}",
+            password = $"{Password}",
             client_id = "postman",
             client_secret = "NotASecret",
             scope = "meetEventApp openid profile"

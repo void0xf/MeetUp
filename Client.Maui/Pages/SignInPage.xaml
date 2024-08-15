@@ -4,12 +4,65 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:Client.Maui.ViewModels"
-    Title="SignInPage"
+    Title="Sign In"
     x:DataType="vm:SignInPageViewModel">
-    <VerticalStackLayout>
-        <Entry Placeholder="Username" Text="{Binding Username}" />
-        <Entry Placeholder="Password" Text="{Binding Password}" />
-        <Label Text="{Binding ErrorMessage}" />
-        <Button Command="{Binding SignInCommand}" Text="Sign Up" />
-    </VerticalStackLayout>
+    <ScrollView>
+        <VerticalStackLayout
+            Padding="30"
+            Spacing="25"
+            VerticalOptions="Center">
+            <Image
+                HeightRequest="100"
+                HorizontalOptions="Center"
+                Source="app_logo.png"
+                WidthRequest="100" />
+            <Label
+                FontAttributes="Bold"
+                FontSize="28"
+                HorizontalOptions="Center"
+                Text="Welcome Back!"
+                TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                            Dark={StaticResource PrimaryDark}}" />
+            <Frame
+                Padding="15"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                                  Dark={StaticResource Gray800}}"
+                CornerRadius="10">
+                <VerticalStackLayout Spacing="15">
+                    <Entry
+                        Placeholder="Username"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Username}" />
+                    <Entry
+                        IsPassword="True"
+                        Placeholder="Password"
+                        PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                           Dark={StaticResource Gray600}}"
+                        Text="{Binding Password}" />
+                </VerticalStackLayout>
+            </Frame>
+            <Label
+                IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotNullOrEmptyBoolConverter}}"
+                Text="{Binding ErrorMessage}"
+                TextColor="Red" />
+            <Button
+                BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                  Dark={StaticResource PrimaryDark}}"
+                Command="{Binding SignInCommand}"
+                CornerRadius="5"
+                FontAttributes="Bold"
+                HeightRequest="50"
+                Text="Sign In"
+                TextColor="White" />
+            <Label
+                FontSize="14"
+                HorizontalOptions="Center"
+                Text="Don't have an account? Sign Up">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateToSignUpCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
