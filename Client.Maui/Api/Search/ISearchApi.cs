@@ -10,4 +10,7 @@ public interface ISearchApi
         [Query] int page = 1,
         [Query] int pageSize = 10
     );
+
+    [Get("/MeetEvent")]
+    Task<List<Event>> SearchMeetAsync();
 }
