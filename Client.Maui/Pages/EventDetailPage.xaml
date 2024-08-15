@@ -7,30 +7,102 @@
     Title="Event Detail"
     x:DataType="vm:EventDetailViewModel">
 
-    <Grid RowDefinitions="*, Auto">
-
-
+    <Grid RowDefinitions="*, Auto" RowSpacing="0">
+        <!--  Event Details  -->
         <ScrollView Grid.Row="0">
-            <StackLayout>
+            <StackLayout Padding="20" Spacing="20">
                 <Label
                     FontAttributes="Bold"
-                    FontSize="Large"
-                    Text="{Binding Event.Title}" />
-                <Label FontSize="Medium" Text="{Binding Event.Description}" />
-                <Label FontSize="Small" Text="{Binding Event.Location}" />
-                <Label FontSize="Small" Text="{Binding Event.EventStartDate, StringFormat='Event Date: {0:MM/dd/yyyy hh:mm tt}'}" />
-                <Label FontSize="Small" Text="{Binding Event.Author}" />
+                    FontSize="28"
+                    Text="{Binding Event.Title}"
+                    TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                                Dark={StaticResource PrimaryDark}}" />
+
+                <BoxView HeightRequest="2" Color="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+
+                <StackLayout Spacing="10">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="18"
+                        Text="Description"
+                        TextColor="{AppThemeBinding Light={StaticResource Gray900},
+                                                    Dark={StaticResource Gray100}}" />
+                    <Label
+                        FontSize="16"
+                        Text="{Binding Event.Description}"
+                        TextColor="{AppThemeBinding Light={StaticResource Gray800},
+                                                    Dark={StaticResource Gray200}}" />
+                </StackLayout>
+
+                <StackLayout Spacing="15">
+                    <StackLayout Orientation="Horizontal" Spacing="10">
+                        <Label
+                            FontSize="18"
+                            Text="📍"
+                            VerticalOptions="Center" />
+                        <Label
+                            FontSize="16"
+                            Text="{Binding Event.Location}"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray800},
+                                                        Dark={StaticResource Gray200}}"
+                            VerticalOptions="Center" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" Spacing="10">
+                        <Label
+                            FontSize="18"
+                            Text="🗓"
+                            VerticalOptions="Center" />
+                        <Label
+                            FontSize="16"
+                            Text="{Binding Event.EventStartDate, StringFormat='{0:dddd, MMMM d, yyyy at h:mm tt}'}"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray800},
+                                                        Dark={StaticResource Gray200}}"
+                            VerticalOptions="Center" />
+                    </StackLayout>
+
+                    <StackLayout Orientation="Horizontal" Spacing="10">
+                        <Label
+                            FontSize="18"
+                            Text="👤"
+                            VerticalOptions="Center" />
+                        <Label
+                            FontSize="16"
+                            Text="{Binding Event.Author}"
+                            TextColor="{AppThemeBinding Light={StaticResource Gray800},
+                                                        Dark={StaticResource Gray200}}"
+                            VerticalOptions="Center" />
+                    </StackLayout>
+                </StackLayout>
             </StackLayout>
         </ScrollView>
 
-
-        <StackLayout Grid.Row="1" Background="Gray">
-            <Grid ColumnDefinitions="*, *">
-                <Label Grid.Column="0" Text="Free" />
-
-                <Button Grid.Column="1" Text="Join" />
-            </Grid>
-            <FlexLayout Direction="Row" JustifyContent="SpaceBetween" />
-        </StackLayout>
+        <!--  Action Bar  -->
+        <Grid
+            Grid.Row="1"
+            Padding="20,15"
+            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                              Dark={StaticResource Gray900}}"
+            ColumnDefinitions="*, Auto">
+            <Label
+                Grid.Column="0"
+                FontAttributes="Bold"
+                FontSize="20"
+                Text="Free"
+                TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                            Dark={StaticResource PrimaryDark}}"
+                VerticalOptions="Center" />
+            <Button
+                Grid.Column="1"
+                Padding="20,10"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Primary},
+                                                  Dark={StaticResource PrimaryDark}}"
+                Command="{Binding JoinEventCommand}"
+                CornerRadius="5"
+                FontAttributes="Bold"
+                FontSize="16"
+                Text="Join Event"
+                TextColor="White" />
+        </Grid>
     </Grid>
 </ContentPage>
