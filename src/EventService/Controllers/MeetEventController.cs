@@ -49,6 +49,20 @@ public class MeetEventController : ControllerBase
         return Ok(dtoMeetEvent);
     }
 
+    [HttpGet("me")]
+    public async Task<ActionResult<List<MeetEventDto>>> GetMyMeetEven()
+    {
+        var meetEvents = await _context
+            .MeetEvents.Where(x => x.Author == User.Identity.Name)
+            .ToListAsync();
+        var dtoMeetEvents = _mapper.Map<List<MeetEventDto>>(meetEvents);
+
+        if (meetEvents == null || meetEvents.Count == 0)
+            return NotFound();
+
+        return Ok(dtoMeetEvents);
+    }
+
     [Authorize]
     [HttpPost("AddUserToParticipantList/{meetEventId}")]
     public async Task<ActionResult> AddUserToParticipantList(string meetEventId)
