@@ -5,40 +5,89 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:EventModel="clr-namespace:Client.Maui.Api"
     xmlns:vm="clr-namespace:Client.Maui.ViewModels"
-    Title="SearchPage"
+    Title="Search Events"
     x:DataType="vm:SearchViewModel">
-
-
-    <StackLayout Padding="10">
-        <SearchBar
-            Placeholder="Search for events..."
-            SearchCommand="{Binding SearchEventsCommand}"
-            Text="{Binding SearchTerm}" />
-
-        <Label
-            Margin="0,10,0,0"
-            FontAttributes="Bold"
-            FontSize="Medium"
-            Text="Results" />
-
+    <Grid RowDefinitions="Auto,*" RowSpacing="0">
+        <StackLayout
+            Grid.Row="0"
+            Padding="20,10"
+            BackgroundColor="{AppThemeBinding Light={StaticResource Gray100},
+                                              Dark={StaticResource Gray900}}">
+            <SearchBar
+                BackgroundColor="{AppThemeBinding Light=White,
+                                                  Dark={StaticResource Gray800}}"
+                CancelButtonColor="{AppThemeBinding Light={StaticResource Primary},
+                                                    Dark={StaticResource PrimaryDark}}"
+                Placeholder="Search for events..."
+                PlaceholderColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                   Dark={StaticResource Gray600}}"
+                SearchCommand="{Binding FilterEventsCommand}"
+                Text="{Binding SearchTerm}"
+                TextColor="{AppThemeBinding Light={StaticResource Gray900},
+                                            Dark={StaticResource Gray100}}" />
+            <Label
+                Margin="0,15,0,5"
+                FontAttributes="Bold"
+                FontSize="18"
+                Text="Search Results"
+                TextColor="{AppThemeBinding Light={StaticResource Gray900},
+                                            Dark={StaticResource Gray100}}" />
+        </StackLayout>
         <CollectionView
-            ItemsSource="{Binding Results}"
-            SelectedItem="{Binding SelectedEvent}"
-            SelectionChangedCommand="{Binding SelectEventCommand}"
-            SelectionMode="Single">
+            Grid.Row="1"
+            EmptyView="No events found. Try a different search term."
+            ItemsSource="{Binding Results}">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="{x:Type EventModel:Event}">
-                    <StackLayout Padding="10">
-                        <Label
-                            FontAttributes="Bold"
-                            FontSize="Large"
-                            Text="{Binding Title}" />
-                        <Label FontSize="Medium" Text="{Binding Description}" />
-                        <Label FontSize="Small" Text="{Binding Location}" />
-                        <Label FontSize="Small" Text="{Binding EventStartDate, StringFormat='Event Date: {0:MM/dd/yyyy hh:mm tt}'}" />
-                    </StackLayout>
+                <DataTemplate x:DataType="EventModel:Event">
+                    <Frame
+                        Margin="20,10"
+                        Padding="15"
+                        BackgroundColor="{AppThemeBinding Light=White,
+                                                          Dark={StaticResource Gray800}}"
+                        CornerRadius="10">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=NavigateToEventDetailCommand}" CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="5">
+                            <Label
+                                Grid.Row="0"
+                                FontAttributes="Bold"
+                                FontSize="18"
+                                Text="{Binding Title}"
+                                TextColor="{AppThemeBinding Light={StaticResource Primary},
+                                                            Dark={StaticResource PrimaryDark}}" />
+                            <Label
+                                Grid.Row="1"
+                                FontSize="14"
+                                LineBreakMode="TailTruncation"
+                                MaxLines="2"
+                                Text="{Binding Description}"
+                                TextColor="{AppThemeBinding Light={StaticResource Gray800},
+                                                            Dark={StaticResource Gray200}}" />
+                            <Label
+                                Grid.Row="2"
+                                FontSize="12"
+                                Text="{Binding Location}"
+                                TextColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                            Dark={StaticResource Gray400}}" />
+                            <Label
+                                Grid.Row="3"
+                                FontSize="12"
+                                Text="{Binding EventStartDate, StringFormat='Event Date: {0:MMM dd, yyyy HH:mm}'}"
+                                TextColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                            Dark={StaticResource Gray400}}" />
+                        </Grid>
+                    </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-    </StackLayout>
+
+        <!--  Loading Indicator  -->
+        <ActivityIndicator
+            Grid.RowSpan="2"
+            HorizontalOptions="Center"
+            IsRunning="{Binding IsLoading}"
+            IsVisible="{Binding IsLoading}"
+            VerticalOptions="Center" />
+    </Grid>
 </ContentPage>
