@@ -41,16 +41,17 @@ public class MeetEventController : ControllerBase
     public async Task<ActionResult<MeetEventDto>> GetMeetEventById(Guid id)
     {
         var MeetEvent = await _context.MeetEvents.FirstOrDefaultAsync(x => x.Id == id);
-        var dtoMeetEvent = _mapper.Map<MeetEventDto>(MeetEvent);
-
-        if (dtoMeetEvent == null)
+        
+        if (MeetEvent == null)
             return NotFound();
+            
+        var dtoMeetEvent = _mapper.Map<MeetEventDto>(MeetEvent);
 
         return Ok(dtoMeetEvent);
     }
 
     [HttpGet("me")]
-    public async Task<ActionResult<List<MeetEventDto>>> GetMyMeetEven()
+    public async Task<ActionResult<List<MeetEventDto>>> GetMyMeetEvents()
     {
         var meetEvents = await _context
             .MeetEvents.Where(x => x.Author == User.Identity.Name)
@@ -67,25 +68,32 @@ public class MeetEventController : ControllerBase
     [HttpPost("AddUserToParticipantList/{meetEventId}")]
     public async Task<ActionResult> AddUserToParticipantList(string meetEventId)
     {
-        var meetEventToUpdate = await _context.MeetEvents.FirstAsync(m =>
+        var meetEventToUpdate = await _context.MeetEvents.FirstOrDefaultAsync(m =>
             m.Id.ToString() == meetEventId
         );
         if (meetEventToUpdate == null)
             return NotFound();
 
-        var message = new MeetEventParticipantAdded();
-        message.ConversationId = meetEventToUpdate.ConversationId;
-        message.ParticipantUsername = User.Identity.Name;
-
-        _publishEndpoint.Publish(message);
-
+        var currentUsername = User.Identity.Name;
+            
         if (meetEventToUpdate.Participants == null)
         {
             meetEventToUpdate.Participants = new List<string>();
         }
-        meetEventToUpdate.Participants.Add(User.Identity.Name);
+        
+        // Check if user is already a participant
+        if (!meetEventToUpdate.Participants.Contains(currentUsername))
+        {
+            meetEventToUpdate.Participants.Add(currentUsername);
+            
+            var message = new MeetEventParticipantAdded();
+            message.ConversationId = meetEventToUpdate.ConversationId;
+            message.ParticipantUsername = currentUsername;
 
-        await _context.SaveChangesAsync();
+            await _publishEndpoint.Publish(message);
+            
+            await _context.SaveChangesAsync();
+        }
 
         return Ok();
     }
@@ -120,16 +128,17 @@ public class MeetEventController : ControllerBase
 
     [Authorize]
     [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateMeetEvent(UpdateMeetEventDto updateMeetEvent)
+    public async Task<ActionResult> UpdateMeetEvent(Guid id, UpdateMeetEventDto updateMeetEvent)
     {
-        if (updateMeetEvent.Author != User.Identity.Name)
-            return Forbid();
-
         var MeetEventToUpdate = await _context.MeetEvents.FirstOrDefaultAsync(me =>
-            me.Id == updateMeetEvent.Id
+            me.Id == id
         );
+        
         if (MeetEventToUpdate == null)
-            return BadRequest();
+            return NotFound("Event not found");
+            
+        if (MeetEventToUpdate.Author != User.Identity.Name)
+            return Forbid();
 
         MeetEventToUpdate.Title = updateMeetEvent.Title;
         MeetEventToUpdate.Description = updateMeetEvent.Description;
@@ -137,6 +146,8 @@ public class MeetEventController : ControllerBase
         MeetEventToUpdate.EventStartDate = updateMeetEvent.EventStartDate;
         MeetEventToUpdate.Images = updateMeetEvent.Images;
         MeetEventToUpdate.Location = updateMeetEvent.Location;
+        MeetEventToUpdate.Visibility = updateMeetEvent.Visibility;
+        MeetEventToUpdate.UpdatedAt = DateTime.UtcNow;
 
         var meetEventMessage = _mapper.Map<MeetEventUpdated>(MeetEventToUpdate);
 
@@ -153,13 +164,13 @@ public class MeetEventController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteMeetEvent(Guid id)
     {
-        var MeetEvent = await _context.MeetEvents.FirstAsync(me => me.Id == id);
+        var MeetEvent = await _context.MeetEvents.FirstOrDefaultAsync(me => me.Id == id);
+        
+        if (MeetEvent == null)
+            return NotFound("Event not found");
 
         if (MeetEvent.Author != User.Identity.Name)
             return Forbid();
-
-        if (MeetEvent == null)
-            return NotFound("");
 
         _context.MeetEvents.Remove(MeetEvent);
 

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using EventService.Models;
 
 namespace EventService.DTOs;
 
@@ -20,10 +21,7 @@ public class CreateMeetEventDto
     public string Location { get; set; }
 
     [Required]
-    public string Author { get; set; }
-
-    [Required]
-    public string Visibility { get; set; }
+    public EventType Visibility { get; set; } = EventType.Public;
 
     [Required]
     public List<string> Images { get; set; }
