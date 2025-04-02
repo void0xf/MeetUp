@@ -1,0 +1,788 @@
+{
+  "info": {
+    "name": "MeetUp API",
+    "description": "Collection for testing MeetUp microservices (Updated for fixed backend)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost",
+      "type": "string"
+    },
+    {
+      "key": "identityPort",
+      "value": "5000",
+      "type": "string"
+    },
+    {
+      "key": "eventPort",
+      "value": "7001",
+      "type": "string"
+    },
+    {
+      "key": "searchPort",
+      "value": "7002",
+      "type": "string"
+    },
+    {
+      "key": "userPort",
+      "value": "7003",
+      "type": "string"
+    },
+    {
+      "key": "conversationPort",
+      "value": "7004",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Identity Service",
+      "description": "Authentication and identity management endpoints",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{identityPort}}/connect/token/user/register",
+              "host": ["{{baseUrl}}"],
+              "port": "{{identityPort}}",
+              "path": ["connect", "token", "user", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"email\": \"test@example.com\",\n  \"password\": \"{{password}}\"\n}"
+            },
+            "description": "Register a new user"
+          }
+        },
+        {
+          "name": "Get Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"access_token\", jsonData.access_token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{identityPort}}/connect/token",
+              "host": ["{{baseUrl}}"],
+              "port": "{{identityPort}}",
+              "path": ["connect", "token"]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "postman"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "NotASecret"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "scope",
+                  "value": "openid profile meetEventApp"
+                }
+              ]
+            },
+            "description": "Get access token for API authentication"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Event Service",
+      "description": "Manage events",
+      "item": [
+        {
+          "name": "Get All Events",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{eventPort}}/api/MeetEvent",
+              "host": ["{{baseUrl}}"],
+              "port": "{{eventPort}}",
+              "path": ["api", "MeetEvent"]
+            },
+            "description": "Get all events"
+          }
+        },
+        {
+          "name": "Get Event by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Save event ID for later tests if successful",
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData && jsonData.id) {",
+                  "        pm.environment.set(\"event_id\", jsonData.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{eventPort}}/api/MeetEvent/{{event_id}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{eventPort}}",
+              "path": ["api", "MeetEvent", "{{event_id}}"]
+            },
+            "description": "Get event by ID (uses the event_id variable)"
+          }
+        },
+        {
+          "name": "Get My Events",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{eventPort}}/api/MeetEvent/me",
+              "host": ["{{baseUrl}}"],
+              "port": "{{eventPort}}",
+              "path": ["api", "MeetEvent", "me"]
+            },
+            "description": "Get events created by the authenticated user"
+          }
+        },
+        {
+          "name": "Create Event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Save event ID from the response",
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData && jsonData.id) {",
+                  "        pm.environment.set(\"event_id\", jsonData.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{eventPort}}/api/MeetEvent",
+              "host": ["{{baseUrl}}"],
+              "port": "{{eventPort}}",
+              "path": ["api", "MeetEvent"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event description\",\n  \"eventStartDate\": \"2024-12-01T10:00:00Z\",\n  \"eventEndDate\": \"2024-12-01T12:00:00Z\",\n  \"location\": \"Online\",\n  \"visibility\": 0,\n  \"images\": [\"image_url_1\", \"image_url_2\"]\n}"
+            },
+            "description": "Create a new event"
+          }
+        },
+        {
+          "name": "Update Event",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{eventPort}}/api/MeetEvent/{{event_id}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{eventPort}}",
+              "path": ["api", "MeetEvent", "{{event_id}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event description\",\n  \"eventStartDate\": \"2024-12-01T10:00:00Z\",\n  \"eventEndDate\": \"2024-12-01T12:00:00Z\",\n  \"location\": \"Updated Location\",\n  \"visibility\": 0,\n  \"images\": [\"image_url_1\", \"image_url_2\"]\n}"
+            },
+            "description": "Update an existing event (uses the event_id variable)"
+          }
+        },
+        {
+          "name": "Add User to Participant List",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{eventPort}}/api/MeetEvent/AddUserToParticipantList/{{event_id}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{eventPort}}",
+              "path": [
+                "api",
+                "MeetEvent",
+                "AddUserToParticipantList",
+                "{{event_id}}"
+              ]
+            },
+            "description": "Add the current user to event participants"
+          }
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{eventPort}}/api/MeetEvent/{{event_id}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{eventPort}}",
+              "path": ["api", "MeetEvent", "{{event_id}}"]
+            },
+            "description": "Delete an event (uses the event_id variable)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Search Service",
+      "description": "Search functionality",
+      "item": [
+        {
+          "name": "Search Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{searchPort}}/api/search?searchTerm=sample&pageNumber=1&pageSize=10&orderBy=Title&filterBy=Upcoming",
+              "host": ["{{baseUrl}}"],
+              "port": "{{searchPort}}",
+              "path": ["api", "search"],
+              "query": [
+                {
+                  "key": "searchTerm",
+                  "value": "sample"
+                },
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "orderBy",
+                  "value": "Title"
+                },
+                {
+                  "key": "filterBy",
+                  "value": "Upcoming"
+                }
+              ]
+            },
+            "description": "Search for items with filtering, sorting, and pagination"
+          }
+        },
+        {
+          "name": "Search Items - Ending Soon",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{searchPort}}/api/search?searchTerm=&pageNumber=1&pageSize=10&orderBy=Title&filterBy=EndingSoon",
+              "host": ["{{baseUrl}}"],
+              "port": "{{searchPort}}",
+              "path": ["api", "search"],
+              "query": [
+                {
+                  "key": "searchTerm",
+                  "value": ""
+                },
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "orderBy",
+                  "value": "Title"
+                },
+                {
+                  "key": "filterBy",
+                  "value": "EndingSoon"
+                }
+              ]
+            },
+            "description": "Search for events ending soon"
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Service",
+      "description": "User management endpoints",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{userPort}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "port": "{{userPort}}",
+              "path": ["api", "users"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{username}}\",\n  \"fullname\": \"Test User\",\n  \"description\": \"This is a test user profile\"\n}"
+            },
+            "description": "Create user profile"
+          }
+        },
+        {
+          "name": "Get User by Username",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{userPort}}/api/users/{{username}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{userPort}}",
+              "path": ["api", "users", "{{username}}"]
+            },
+            "description": "Get user by username"
+          }
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{userPort}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "port": "{{userPort}}",
+              "path": ["api", "users"]
+            },
+            "description": "Get all users"
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{userPort}}/api/users/{{username}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{userPort}}",
+              "path": ["api", "users", "{{username}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated user profile description\",\n  \"fullname\": \"Test User Updated\",\n  \"whoCanMessage\": \"anyone\",\n  \"chatsId\": []\n}"
+            },
+            "description": "Update user profile"
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{userPort}}/api/users/{{username}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{userPort}}",
+              "path": ["api", "users", "{{username}}"]
+            },
+            "description": "Delete user profile"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Conversation Service",
+      "description": "Manage conversations and messages",
+      "item": [
+        {
+          "name": "Get All Conversations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{conversationPort}}/api/conversations",
+              "host": ["{{baseUrl}}"],
+              "port": "{{conversationPort}}",
+              "path": ["api", "conversations"]
+            },
+            "description": "Get all conversations"
+          }
+        },
+        {
+          "name": "Get Conversation by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{conversationPort}}/api/conversations/{{conversation_id}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{conversationPort}}",
+              "path": ["api", "conversations", "{{conversation_id}}"]
+            },
+            "description": "Get conversation by ID (uses the conversation_id variable)"
+          }
+        },
+        {
+          "name": "Create Conversation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Save conversation ID for later tests",
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData && jsonData.id) {",
+                  "        pm.environment.set(\"conversation_id\", jsonData.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{conversationPort}}/api/conversations",
+              "host": ["{{baseUrl}}"],
+              "port": "{{conversationPort}}",
+              "path": ["api", "conversations"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isDM\": true,\n  \"participants\": [\"{{username}}\", \"otheruser\"],\n  \"messages\": [\n    {\n      \"sender\": \"{{username}}\",\n      \"content\": \"Hello!\",\n      \"timestamp\": \"2023-12-01T10:00:00Z\"\n    }\n  ]\n}"
+            },
+            "description": "Create a new conversation"
+          }
+        },
+        {
+          "name": "Update Conversation",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{conversationPort}}/api/conversations/{{conversation_id}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{conversationPort}}",
+              "path": ["api", "conversations", "{{conversation_id}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isDM\": true,\n  \"participants\": [\"{{username}}\", \"otheruser\"],\n  \"messages\": [\n    {\n      \"sender\": \"{{username}}\",\n      \"content\": \"Hello!\",\n      \"timestamp\": \"2023-12-01T10:00:00Z\"\n    },\n    {\n      \"sender\": \"otheruser\",\n      \"content\": \"Hi there!\",\n      \"timestamp\": \"2023-12-01T10:01:00Z\"\n    }\n  ]\n}"
+            },
+            "description": "Update an existing conversation"
+          }
+        },
+        {
+          "name": "Delete Conversation",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{conversationPort}}/api/conversations/{{conversation_id}}",
+              "host": ["{{baseUrl}}"],
+              "port": "{{conversationPort}}",
+              "path": ["api", "conversations", "{{conversation_id}}"]
+            },
+            "description": "Delete a conversation"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gateway Tests",
+      "description": "Test endpoints through the Gateway service",
+      "item": [
+        {
+          "name": "Get All Events (Gateway)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{gatewayPort}}/MeetEvent",
+              "host": ["{{baseUrl}}"],
+              "port": "{{gatewayPort}}",
+              "path": ["MeetEvent"]
+            },
+            "description": "Get all events through the gateway"
+          }
+        },
+        {
+          "name": "Search Items (Gateway)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}:{{gatewayPort}}/search?searchTerm=sample&pageNumber=1&pageSize=10&orderBy=Title&filterBy=Upcoming",
+              "host": ["{{baseUrl}}"],
+              "port": "{{gatewayPort}}",
+              "path": ["search"],
+              "query": [
+                {
+                  "key": "searchTerm",
+                  "value": "sample"
+                },
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "orderBy",
+                  "value": "Title"
+                },
+                {
+                  "key": "filterBy",
+                  "value": "Upcoming"
+                }
+              ]
+            },
+            "description": "Search for items through the gateway"
+          }
+        },
+        {
+          "name": "Get Token (Gateway)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "pm.environment.set(\"access_token\", jsonData.access_token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{gatewayPort}}/connect/token",
+              "host": ["{{baseUrl}}"],
+              "port": "{{gatewayPort}}",
+              "path": ["connect", "token"]
+            },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "grant_type",
+                  "value": "password"
+                },
+                {
+                  "key": "client_id",
+                  "value": "postman"
+                },
+                {
+                  "key": "client_secret",
+                  "value": "NotASecret"
+                },
+                {
+                  "key": "username",
+                  "value": "{{username}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{password}}"
+                },
+                {
+                  "key": "scope",
+                  "value": "openid profile meetEventApp"
+                }
+              ]
+            },
+            "description": "Get access token through the gateway"
+          }
+        },
+        {
+          "name": "Create Event (Gateway)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Save event ID from the response",
+                  "if (pm.response.code === 201) {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData && jsonData.id) {",
+                  "        pm.environment.set(\"event_id\", jsonData.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{access_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}:{{gatewayPort}}/MeetEvent",
+              "host": ["{{baseUrl}}"],
+              "port": "{{gatewayPort}}",
+              "path": ["MeetEvent"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Gateway Test Event\",\n  \"description\": \"Event created through gateway\",\n  \"eventStartDate\": \"2024-12-01T10:00:00Z\",\n  \"eventEndDate\": \"2024-12-01T12:00:00Z\",\n  \"location\": \"Online\",\n  \"visibility\": 0,\n  \"images\": [\"image_url_1\", \"image_url_2\"]\n}"
+            },
+            "description": "Create a new event through the gateway"
+          }
+        }
+      ]
+    }
+  ]
+}
