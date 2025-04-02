@@ -1,5 +1,6 @@
 using ConversationService.Consumers;
 using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,19 @@ builder.Services.AddMassTransit(x =>
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
 
+// Add JWT authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = builder.Configuration["IdentityServiceUrl"];
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters.ValidateAudience = false;
+        options.TokenValidationParameters.NameClaimType = "username";
+    });
+
+// Add authorization
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 /*app.UseCors(builder =>
@@ -37,6 +51,12 @@ var app = builder.Build();
 });
 */
 app.UseRouting();
+
+// Add authentication middleware
+app.UseAuthentication();
+
+// Add authorization middleware
+app.UseAuthorization();
 
 try
 {

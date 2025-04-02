@@ -1,4 +1,5 @@
 ﻿using ConversationService.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Entities;
 
@@ -26,6 +27,7 @@ namespace ConversationService.Controller
             return Ok(conversation);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Conversation>> Post([FromBody] ConversationDTO conversation)
         {
@@ -35,9 +37,10 @@ namespace ConversationService.Controller
             newConversation.Participants = conversation.Participants;
 
             await newConversation.SaveAsync();
-            return CreatedAtAction(nameof(Get), new { id = newConversation.ID }, conversation);
+            return CreatedAtAction(nameof(Get), new { id = newConversation.ID }, newConversation);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(string id, [FromBody] Conversation conversation)
         {
@@ -55,6 +58,7 @@ namespace ConversationService.Controller
             return NoContent();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
