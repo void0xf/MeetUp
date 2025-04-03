@@ -43,7 +43,7 @@ namespace ConversationService.Controller
 
         
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody] Conversation conversation)
+        public async Task<IActionResult> Put(string id, [FromBody] ConversationDTO conversation)
         {
             var existingConversation = await DB.Find<Conversation>().OneAsync(id);
             if (existingConversation == null)
