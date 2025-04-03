@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Entities;
 using UserService.DTOs;
@@ -10,57 +11,69 @@ namespace UserService.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
+        private readonly IMapper _mapper;
+
+        public UsersController(IMapper mapper)
+        {
+            _mapper = mapper;
+        }
+
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<UserInfoDto>> Create(UserInfoDto userInfo)
+        public async Task<ActionResult<UserResponseDto>> Create(CreateUserDto createUserDto)
         {
             var existingUserInfo = await DB.Find<UserInfo>()
-                .Match(u => u.Username == userInfo.Username)
+                .Match(u => u.Username == createUserDto.Username)
                 .ExecuteFirstAsync();
+                
             if (existingUserInfo != null)
             {
                 return BadRequest("User already exists");
             }
-            var createdUser = new UserInfo();
-            createdUser.Username = userInfo.Username;
-            createdUser.Fullname = userInfo.Fullname;
-            createdUser.Description = userInfo.Description;
-
-            await createdUser.SaveAsync();
+            
+            var userInfo = _mapper.Map<UserInfo>(createUserDto);
+            await userInfo.SaveAsync();
+            
+            var responseDto = _mapper.Map<UserResponseDto>(userInfo);
             return CreatedAtAction(
                 nameof(GetByUsername),
                 new { username = userInfo.Username },
-                userInfo
+                responseDto
             );
         }
 
         [HttpGet("{username}")]
-        public async Task<ActionResult<UserInfo>> GetByUsername(string username)
+        public async Task<ActionResult<UserResponseDto>> GetByUsername(string username)
         {
             var userInfo = await DB.Find<UserInfo>()
                 .Match(u => u.Username == username)
                 .ExecuteFirstAsync();
+                
             if (userInfo == null)
             {
                 return NotFound();
             }
-            return Ok(userInfo);
+            
+            var responseDto = _mapper.Map<UserResponseDto>(userInfo);
+            return Ok(responseDto);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<UserInfo>>> GetAll()
+        public async Task<ActionResult<List<UserResponseDto>>> GetAll()
         {
             var userInfos = await DB.Find<UserInfo>().ExecuteAsync();
-            return Ok(userInfos);
+            var responseDtos = _mapper.Map<List<UserResponseDto>>(userInfos);
+            return Ok(responseDtos);
         }
 
         [Authorize]
         [HttpPut("{username}")]
-        public async Task<IActionResult> Update(string username, UserInfo updatedUserInfo)
+        public async Task<IActionResult> Update(string username, UpdateUserDto updateUserDto)
         {
             var userInfo = await DB.Find<UserInfo>()
                 .Match(u => u.Username == username)
                 .ExecuteFirstAsync();
+                
             if (userInfo == null)
             {
                 return NotFound();
@@ -71,10 +84,15 @@ namespace UserService.Controllers
                 return Forbid();
             }
 
-            userInfo.Description = updatedUserInfo.Description;
-            userInfo.Fullname = updatedUserInfo.Fullname;
-            userInfo.WhoCanMessage = updatedUserInfo.WhoCanMessage;
-            userInfo.ChatsId = updatedUserInfo.ChatsId;
+            // Update only the properties that are defined in the UpdateUserDto
+            userInfo.Description = updateUserDto.Description;
+            userInfo.Fullname = updateUserDto.Fullname;
+            userInfo.WhoCanMessage = updateUserDto.WhoCanMessage;
+            
+            if (updateUserDto.ChatsId != null)
+            {
+                userInfo.ChatsId = updateUserDto.ChatsId;
+            }
 
             await userInfo.SaveAsync();
             return NoContent();
@@ -87,6 +105,7 @@ namespace UserService.Controllers
             var userInfo = await DB.Find<UserInfo>()
                 .Match(u => u.Username == username)
                 .ExecuteFirstAsync();
+                
             if (userInfo == null)
             {
                 return NotFound();
