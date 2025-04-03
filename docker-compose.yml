@@ -7,6 +7,12 @@ services:
       - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   mongodb:
     image: mongo
     environment:
@@ -16,11 +22,22 @@ services:
       - 27017:27017
     volumes:
       - mongodata:/var/lib/mongodb/data
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     ports:
       - 5672:5672
       - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   user-service:
     build:
@@ -33,7 +50,10 @@ services:
     ports:
       - 7003:80
     depends_on:
-      - mongodb
+      identity-service:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
 
   identity-service:
     build:
@@ -46,7 +66,13 @@ services:
     ports:
       - 5000:80
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "dotnet", "--list-runtimes"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   event-service:
     build:
@@ -59,7 +85,10 @@ services:
     ports:
       - 7001:80
     depends_on:
-      - postgres
+      identity-service:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
 
   conversation-service:
     build:
@@ -72,7 +101,10 @@ services:
     ports:
       - 7004:80
     depends_on:
-      - mongodb
+      identity-service:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
 
   search-service:
     build:
@@ -86,8 +118,12 @@ services:
     ports:
       - 7002:80
     depends_on:
-      - rabbitmq
-      - mongodb
+      identity-service:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
 
   gateway-service:
     build:
@@ -99,11 +135,16 @@ services:
     ports:
       - 6001:80
     depends_on:
-      - user-service
-      - identity-service
-      - event-service
-      - conversation-service
-      - search-service
+      user-service:
+        condition: service_started
+      identity-service:
+        condition: service_healthy
+      event-service:
+        condition: service_started
+      conversation-service:
+        condition: service_started
+      search-service:
+        condition: service_started
 
 volumes:
   pgdata:
