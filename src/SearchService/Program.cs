@@ -1,11 +1,18 @@
 using MassTransit;
 using SearchService.Consumers;
 using SearchService.Data;
+using SearchService.Repositories;
+using SearchService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Register repositories and services
+builder.Services.AddScoped<ISearchRepository, SearchRepository>();
+builder.Services.AddScoped<ISearchService, SearchService.Services.SearchService>();
+
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumersFromNamespaceContaining<MeetEventCreatedConsumer>();

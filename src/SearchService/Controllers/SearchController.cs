@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MongoDB.Entities;
 using SearchService.Models;
 using SearchService.RequestHelpers;
+using SearchService.Services;
 
 namespace SearchService.Controllers;
 
@@ -9,50 +9,24 @@ namespace SearchService.Controllers;
 [Route("api/search")]
 public class SearchController : ControllerBase
 {
-    
+    private readonly ISearchService _searchService;
+
+    public SearchController(ISearchService searchService)
+    {
+        _searchService = searchService;
+    }
     
     [HttpGet]
     public async Task<ActionResult<List<Item>>> SearchItems([FromQuery] RequestParams requestParams)
     {
-        var query = DB.PagedSearch<Item, Item>();
-        query.Sort(x => x.Ascending(a => a.Title));
-
-        if (!string.IsNullOrEmpty(requestParams.SearchTerm))
-        {
-            query.Match(Search.Full, requestParams.SearchTerm);
-        }
-
-        query = requestParams.OrderBy switch
-        {
-            "Title" => query.Sort(x => x.Ascending(a => a.Title)),
-            _ => query.Sort(x => x.Ascending(a => a.Author))
-        };
-
-        if (string.IsNullOrEmpty(requestParams.FilterBy))
-        {
-            // No filter applied when FilterBy is null or empty
-        }
-        else
-        {
-            query = requestParams.FilterBy switch
-            {
-                "EndingSoon" => query.Match(e => e.EventEndDate < DateTime.UtcNow.AddDays(1)),
-                "Upcoming" => query.Match(e => e.EventStartDate > DateTime.UtcNow),
-                _ => query.Match(e => e.EventStartDate >= DateTime.UtcNow)
-            };
-        }
-
-        query.PageNumber(requestParams.PageNumber);
-        query.PageSize(requestParams.PageSize);
-
-        var queryResult = await query.ExecuteAsync();
-
+        var result = await _searchService.SearchItemsAsync(requestParams);
+        
         return Ok(
             new
             {
-                queryResult.Results,
-                queryResult.PageCount,
-                queryResult.TotalCount
+                result.Results,
+                result.PageCount,
+                result.TotalCount
             }
         );
     }
