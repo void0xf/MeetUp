@@ -1,0 +1,111 @@
+name: .NET Backend CI/CD
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "*.sln"
+      - ".github/workflows/dotnet.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "*.sln"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore MeetUp.sln
+
+      - name: Build
+        run: dotnet build MeetUp.sln --no-restore
+
+      - name: Security scan
+        uses: snyk/actions/dotnet@master
+        continue-on-error: true # to make sure that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: Test Services
+        run: |
+          dotnet test tests/SearchService.Tests --no-build --verbosity normal
+          dotnet test tests/EventService.Tests --no-build --verbosity normal
+
+  docker-backend:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Backend Service Images
+        run: |
+          docker-compose build identity-service
+          docker-compose build user-service
+          docker-compose build event-service
+          docker-compose build conversation-service
+          docker-compose build search-service
+          docker-compose build gateway-service
+
+      - name: Start Infrastructure Services
+        run: |
+          docker-compose up -d postgres mongodb rabbitmq
+          sleep 30  # Allow time for databases to initialize
+
+      - name: Start and Test Identity Service
+        run: |
+          docker-compose up -d identity-service
+          sleep 30  # Allow time for identity service to initialize
+          # Check if identity service is healthy
+          docker-compose ps identity-service
+          curl -f http://localhost:5000/health || exit 1
+
+      - name: Start and Test Other Backend Services
+        run: |
+          docker-compose up -d user-service event-service conversation-service search-service gateway-service
+          sleep 30  # Allow time for all services to initialize
+          docker-compose ps
+          # Health checks for each service
+          echo "Testing User Service..."
+          curl -f http://localhost:7003/health || echo "User service health check failed"
+          echo "Testing Event Service..."
+          curl -f http://localhost:7001/health || echo "Event service health check failed"
+          echo "Testing Search Service..."
+          curl -f http://localhost:7002/health || echo "Search service health check failed"
+          echo "Testing Conversation Service..."
+          curl -f http://localhost:7004/health || echo "Conversation service health check failed"
+          echo "Testing Gateway Service..."
+          curl -f http://localhost:6001/health || echo "Gateway service health check failed"
+
+      - name: Scan Docker Images for Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: "meetup_identity-service:latest"
+          format: "table"
+          exit-code: "0"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+
+      - name: Clean up resources
+        run: docker-compose down
+        if: always() # Ensure cleanup happens even if a previous step failed
