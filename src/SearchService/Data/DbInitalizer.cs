@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+using AutoMapper;
+using Contracts;
 using MongoDB.Driver;
 using MongoDB.Entities;
 using SearchService.Models;
@@ -26,14 +27,30 @@ public class DbInitalizer
 
         if (count == 0)
         {
-            Console.WriteLine("Not Data Found, Seeding data");
-            var itemData = await File.ReadAllTextAsync("Data/ExampleData.json");
-
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
-            var items = JsonSerializer.Deserialize<List<Item>>(itemData, options);
-
-            await DB.SaveAsync(items);
+            Console.WriteLine("No data found in SearchService, seeding from shared data");
+            await SeedDirectlyFromSharedData();
         }
     }
-}
+
+    private static async Task SeedDirectlyFromSharedData()
+    {
+        var seedEvents = SeedData.GetSeedEvents();
+        var items = seedEvents.Select(e => new Item
+        {
+            ID = e.Id.ToString(),
+            Title = e.Title,
+            Description = e.Description,
+            CreatedAt = e.CreatedAt,
+            UpdatedAt = e.UpdatedAt,
+            EventStartDate = e.EventStartDate,
+            EventEndDate = e.EventEndDate,
+            Location = e.Location,
+            Author = e.Author,
+            Visibility = e.Visibility,
+            Images = e.Images
+        }).ToList();
+
+        await DB.SaveAsync(items);
+        Console.WriteLine($"Seeded {items.Count} events to SearchService database directly from shared data");
+    }
+} 

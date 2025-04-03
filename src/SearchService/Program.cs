@@ -34,6 +34,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+// Initialize database with shared seed data
 await DbInitalizer.InitDb(app);
 
 app.MapControllers();
