@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
-using Contracts;
-using EventService.Data;
 using EventService.DTOs;
-using EventService.Models;
-using MassTransit;
+using EventService.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace EventService.Controllers;
 
@@ -14,173 +10,88 @@ namespace EventService.Controllers;
 [Route("api/MeetEvent")]
 public class MeetEventController : ControllerBase
 {
-    private readonly MeetEventDbContext _context;
-    private readonly IMapper _mapper;
-    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IEventService _eventService;
 
-    public MeetEventController(
-        MeetEventDbContext context,
-        IMapper mapper,
-        IPublishEndpoint publishEndpoint
-    )
+    public MeetEventController(IEventService eventService)
     {
-        _context = context;
-        _mapper = mapper;
-        _publishEndpoint = publishEndpoint;
+        _eventService = eventService;
     }
+
     [HttpGet]
     public async Task<ActionResult<List<MeetEventDto>>> GetAllEvents()
     {
-        var meetEvents = await _context.MeetEvents.ToListAsync<MeetEvent>();
-        var dtoMeetEvents = _mapper.Map<List<MeetEventDto>>(meetEvents);
-        return Ok(dtoMeetEvents);
+        var meetEvents = await _eventService.GetAllEventsAsync();
+        return Ok(meetEvents);
     }
     
     [HttpGet("{id}")]
     public async Task<ActionResult<MeetEventDto>> GetMeetEventById(Guid id)
     {
-        var MeetEvent = await _context.MeetEvents.FirstOrDefaultAsync(x => x.Id == id);
+        var meetEvent = await _eventService.GetMeetEventByIdAsync(id);
         
-        if (MeetEvent == null)
+        if (meetEvent == null)
             return NotFound();
-            
-        var dtoMeetEvent = _mapper.Map<MeetEventDto>(MeetEvent);
 
-        return Ok(dtoMeetEvent);
+        return Ok(meetEvent);
     }
 
     [HttpGet("me")]
     public async Task<ActionResult<List<MeetEventDto>>> GetMyMeetEvents()
     {
-        var meetEvents = await _context
-            .MeetEvents.Where(x => x.Author == User.Identity.Name)
-            .ToListAsync();
-        var dtoMeetEvents = _mapper.Map<List<MeetEventDto>>(meetEvents);
+        var meetEvents = await _eventService.GetMyMeetEventsAsync(User.Identity.Name);
 
-        if (meetEvents == null || meetEvents.Count == 0)
+        if (meetEvents == null)
             return NotFound();
 
-        return Ok(dtoMeetEvents);
+        return Ok(meetEvents);
     }
 
-    
     [HttpPost("AddUserToParticipantList/{meetEventId}")]
     public async Task<ActionResult> AddUserToParticipantList(string meetEventId)
     {
-        var meetEventToUpdate = await _context.MeetEvents.FirstOrDefaultAsync(m =>
-            m.Id.ToString() == meetEventId
-        );
-        if (meetEventToUpdate == null)
-            return NotFound();
-
-        var currentUsername = User.Identity.Name;
-            
-        if (meetEventToUpdate.Participants == null)
-        {
-            meetEventToUpdate.Participants = new List<string>();
-        }
+        var result = await _eventService.AddUserToParticipantListAsync(meetEventId, User.Identity.Name);
         
-        // Check if user is already a participant
-        if (!meetEventToUpdate.Participants.Contains(currentUsername))
-        {
-            meetEventToUpdate.Participants.Add(currentUsername);
-            
-            var message = new MeetEventParticipantAdded();
-            message.ConversationId = meetEventToUpdate.ConversationId;
-            message.ParticipantUsername = currentUsername;
-
-            await _publishEndpoint.Publish(message);
-            
-            await _context.SaveChangesAsync();
-        }
+        if (!result)
+            return NotFound();
 
         return Ok();
     }
 
-    
     [HttpPost]
-    public async Task<ActionResult<CreateMeetEventDto>> CreateMeetEvent(
+    public async Task<ActionResult<MeetEventDto>> CreateMeetEvent(
         CreateMeetEventDto createMeetEvent
     )
     {
-        var MappedMeetEvent = _mapper.Map<MeetEvent>(createMeetEvent);
+        var createdEvent = await _eventService.CreateMeetEventAsync(createMeetEvent, User.Identity.Name);
 
-        MappedMeetEvent.Author = User.Identity.Name;
-
-        _context.MeetEvents.Add(MappedMeetEvent);
-
-        var meetEventMessage = _mapper.Map<MeetEventCreated>(MappedMeetEvent);
-
-        await _publishEndpoint.Publish(meetEventMessage);
-
-        var result = await _context.SaveChangesAsync() > 0;
-
-        if (!result)
+        if (createdEvent == null)
             return BadRequest("Could not create meet event");
 
         return CreatedAtAction(
             nameof(GetMeetEventById),
-            new { MappedMeetEvent.Id, },
-            _mapper.Map<MeetEventDto>(MappedMeetEvent)
+            new { id = createdEvent.Id },
+            createdEvent
         );
     }
 
-    
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateMeetEvent(Guid id, UpdateMeetEventDto updateMeetEvent)
     {
-        var MeetEventToUpdate = await _context.MeetEvents.FirstOrDefaultAsync(me =>
-            me.Id == id
-        );
+        var result = await _eventService.UpdateMeetEventAsync(id, updateMeetEvent, User.Identity.Name);
         
-        if (MeetEventToUpdate == null)
-            return NotFound("Event not found");
-            
-        if (MeetEventToUpdate.Author != User.Identity.Name)
-            return Forbid();
+        if (!result)
+            return NotFound("Event not found or you don't have permission to update it");
 
-        MeetEventToUpdate.Title = updateMeetEvent.Title;
-        MeetEventToUpdate.Description = updateMeetEvent.Description;
-        MeetEventToUpdate.EventEndDate = updateMeetEvent.EventEndDate;
-        MeetEventToUpdate.EventStartDate = updateMeetEvent.EventStartDate;
-        MeetEventToUpdate.Images = updateMeetEvent.Images;
-        MeetEventToUpdate.Location = updateMeetEvent.Location;
-        MeetEventToUpdate.Visibility = updateMeetEvent.Visibility;
-        MeetEventToUpdate.UpdatedAt = DateTime.UtcNow;
-
-        var meetEventMessage = _mapper.Map<MeetEventUpdated>(MeetEventToUpdate);
-
-        await _publishEndpoint.Publish(meetEventMessage);
-
-        var result = await _context.SaveChangesAsync() > 0;
-        if (result)
-            return Ok();
-
-        return BadRequest("Problem with saving changes");
+        return Ok();
     }
 
-    
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteMeetEvent(Guid id)
     {
-        var MeetEvent = await _context.MeetEvents.FirstOrDefaultAsync(me => me.Id == id);
+        var result = await _eventService.DeleteMeetEventAsync(id, User.Identity.Name);
         
-        if (MeetEvent == null)
-            return NotFound("Event not found");
-
-        if (MeetEvent.Author != User.Identity.Name)
-            return Forbid();
-
-        _context.MeetEvents.Remove(MeetEvent);
-
-        var meetEventMessage = _mapper.Map<MeetEventDeleted>(MeetEvent);
-
-        await _publishEndpoint.Publish(meetEventMessage);
-
-        var result = await _context.SaveChangesAsync() > 0;
-
         if (!result)
-            return BadRequest("Could not save changes");
+            return NotFound("Event not found or you don't have permission to delete it");
 
         return Ok();
     }

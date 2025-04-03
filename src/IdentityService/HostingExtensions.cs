@@ -56,6 +56,9 @@ internal static class HostingExtensions
                    options.ClientSecret = "copy client secret from Google here";
                });*/
 
+        // Add health checks
+        builder.Services.AddHealthChecks();
+
         return builder.Build();
     }
 
@@ -74,6 +77,9 @@ internal static class HostingExtensions
         app.UseAuthorization();
 
         app.MapRazorPages().RequireAuthorization();
+        
+        // Map health check endpoint
+        app.MapHealthChecks("/health");
 
         return app;
     }

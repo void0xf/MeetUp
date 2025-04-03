@@ -1,5 +1,7 @@
 using EventService.Consumers;
 using EventService.Data;
+using EventService.Repositories;
+using EventService.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +16,11 @@ builder.Services.AddDbContext<MeetEventDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Register repositories and services
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IEventService, EventService.Services.EventService>();
+
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<ConversationCreatedConsumer>();
