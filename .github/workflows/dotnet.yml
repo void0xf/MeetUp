@@ -27,11 +27,49 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Install MAUI Workloads
+        run: |
+          export DOTNET_ROOT=$HOME/.dotnet
+          export DOTNET_WORKLOAD_MANIFEST_ROOTS=$DOTNET_ROOT/sdk-manifests/8.0.0
+          export DOTNET_NOLOGO=true
+          export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+          export DOTNET_CLI_TELEMETRY_OPTOUT=1
+          # Add more memory to Java heap to avoid issues during workload installation
+          export _JAVA_OPTIONS="-Xmx4g"
+          dotnet workload install maui android ios maccatalyst
+          dotnet workload list
+
       - name: Restore dependencies
         run: dotnet restore MeetUp.sln
 
+      # Alternative approach: Build only backend services (uncomment if MAUI keeps causing issues)
+      # - name: Restore backend only
+      #   run: |
+      #     dotnet restore src/Contracts/Contracts.csproj
+      #     dotnet restore src/IdentityService/IdentityService.csproj
+      #     dotnet restore src/EventService/EventService.csproj
+      #     dotnet restore src/SearchService/SearchService.csproj
+      #     dotnet restore src/UserService/UserService.csproj
+      #     dotnet restore src/ConversationService/ConversationService.csproj
+      #     dotnet restore src/GatewayService/GatewayService.csproj
+      #     dotnet restore tests/SearchService.Tests/SearchService.Tests.csproj
+      #     dotnet restore tests/EventService.Tests/EventService.Tests.csproj
+
       - name: Build
         run: dotnet build MeetUp.sln --no-restore
+
+      # Alternative approach: Build only backend services (uncomment if MAUI keeps causing issues)
+      # - name: Build backend only
+      #   run: |
+      #     dotnet build src/Contracts/Contracts.csproj --no-restore
+      #     dotnet build src/IdentityService/IdentityService.csproj --no-restore
+      #     dotnet build src/EventService/EventService.csproj --no-restore
+      #     dotnet build src/SearchService/SearchService.csproj --no-restore
+      #     dotnet build src/UserService/UserService.csproj --no-restore
+      #     dotnet build src/ConversationService/ConversationService.csproj --no-restore
+      #     dotnet build src/GatewayService/GatewayService.csproj --no-restore
+      #     dotnet build tests/SearchService.Tests/SearchService.Tests.csproj --no-restore
+      #     dotnet build tests/EventService.Tests/EventService.Tests.csproj --no-restore
 
       - name: Security scan
         uses: snyk/actions/dotnet@master
@@ -43,8 +81,9 @@ jobs:
 
       - name: Test Services
         run: |
-          dotnet test tests/SearchService.Tests --no-build --verbosity normal
-          dotnet test tests/EventService.Tests --no-build --verbosity normal
+          # Only test backend services, not client applications
+          dotnet test tests/SearchService.Tests/SearchService.Tests.csproj --no-build --verbosity normal
+          dotnet test tests/EventService.Tests/EventService.Tests.csproj --no-build --verbosity normal
 
   docker-backend:
     runs-on: ubuntu-latest
