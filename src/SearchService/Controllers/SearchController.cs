@@ -10,31 +10,38 @@ namespace SearchService.Controllers;
 public class SearchController : ControllerBase
 {
     [HttpGet]
-    public async Task<ActionResult<List<Item>>> SearchItems([FromQuery] RequestParmas requestParmas)
+    public async Task<ActionResult<List<Item>>> SearchItems([FromQuery] RequestParams requestParams)
     {
         var query = DB.PagedSearch<Item, Item>();
         query.Sort(x => x.Ascending(a => a.Title));
 
-        if (!string.IsNullOrEmpty(requestParmas.SearchTerm))
+        if (!string.IsNullOrEmpty(requestParams.SearchTerm))
         {
-            query.Match(Search.Full, requestParmas.SearchTerm);
+            query.Match(Search.Full, requestParams.SearchTerm);
         }
 
-        query = requestParmas.OrderBy switch
+        query = requestParams.OrderBy switch
         {
             "Title" => query.Sort(x => x.Ascending(a => a.Title)),
             _ => query.Sort(x => x.Ascending(a => a.Author))
         };
 
-        query = requestParmas.FilterBy switch
+        if (string.IsNullOrEmpty(requestParams.FilterBy))
         {
-            "EndingSoon" => query.Match(e => e.EventEndDate < DateTime.UtcNow.AddDays(1)),
-            "Upcoming" => query.Match(e => e.EventStartDate > DateTime.UtcNow),
-            _ => query.Match(e => e.EventStartDate >= DateTime.UtcNow)
-        };
+            // No filter applied when FilterBy is null or empty
+        }
+        else
+        {
+            query = requestParams.FilterBy switch
+            {
+                "EndingSoon" => query.Match(e => e.EventEndDate < DateTime.UtcNow.AddDays(1)),
+                "Upcoming" => query.Match(e => e.EventStartDate > DateTime.UtcNow),
+                _ => query.Match(e => e.EventStartDate >= DateTime.UtcNow)
+            };
+        }
 
-        query.PageNumber(requestParmas.PageNumber);
-        query.PageSize(requestParmas.PageSize);
+        query.PageNumber(requestParams.PageNumber);
+        query.PageSize(requestParams.PageSize);
 
         var queryResult = await query.ExecuteAsync();
 

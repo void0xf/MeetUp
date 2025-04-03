@@ -1,6 +1,6 @@
 ﻿namespace SearchService.RequestHelpers
 {
-    public class RequestParmas
+    public class RequestParams
     {
         public string SearchTerm { get; set; }
         public int PageNumber { get; set; } = 1;
