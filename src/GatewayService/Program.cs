@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,10 +9,15 @@ builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = builder.Configuration["IdentityServiceUrl"];
+        options.Authority = builder.Configuration["IdentityServiceUrl"]; // Identity Service URL
         options.RequireHttpsMetadata = false;
-        options.TokenValidationParameters.ValidateAudience = false;
-        options.TokenValidationParameters.NameClaimType = "username";
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false,
+            ValidIssuer = builder.Configuration["IdentityServiceUrl"], // This ensures the token issuer matches
+            NameClaimType = "username"
+        };
+
     });
 
 var app = builder.Build();
