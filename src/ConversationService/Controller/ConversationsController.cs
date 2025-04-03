@@ -9,13 +9,14 @@ namespace ConversationService.Controller
     [ApiController]
     public class ConversationsController : ControllerBase
     {
+        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Conversation>>> Get()
         {
             var conversations = await DB.Find<Conversation>().ExecuteAsync();
             return Ok(conversations);
         }
-
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<Conversation>> Get(string id)
         {
@@ -27,7 +28,7 @@ namespace ConversationService.Controller
             return Ok(conversation);
         }
 
-        [Authorize]
+        
         [HttpPost]
         public async Task<ActionResult<Conversation>> Post([FromBody] ConversationDTO conversation)
         {
@@ -40,7 +41,7 @@ namespace ConversationService.Controller
             return CreatedAtAction(nameof(Get), new { id = newConversation.ID }, newConversation);
         }
 
-        [Authorize]
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(string id, [FromBody] Conversation conversation)
         {
@@ -58,7 +59,7 @@ namespace ConversationService.Controller
             return NoContent();
         }
 
-        [Authorize]
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {

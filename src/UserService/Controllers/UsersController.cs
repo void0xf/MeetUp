@@ -17,8 +17,7 @@ namespace UserService.Controllers
         {
             _mapper = mapper;
         }
-
-        [Authorize]
+        
         [HttpPost]
         public async Task<ActionResult<UserResponseDto>> Create(CreateUserDto createUserDto)
         {
@@ -41,7 +40,7 @@ namespace UserService.Controllers
                 responseDto
             );
         }
-
+        
         [HttpGet("{username}")]
         public async Task<ActionResult<UserResponseDto>> GetByUsername(string username)
         {
@@ -57,7 +56,7 @@ namespace UserService.Controllers
             var responseDto = _mapper.Map<UserResponseDto>(userInfo);
             return Ok(responseDto);
         }
-
+        
         [HttpGet]
         public async Task<ActionResult<List<UserResponseDto>>> GetAll()
         {
@@ -65,8 +64,7 @@ namespace UserService.Controllers
             var responseDtos = _mapper.Map<List<UserResponseDto>>(userInfos);
             return Ok(responseDtos);
         }
-
-        [Authorize]
+        
         [HttpPut("{username}")]
         public async Task<IActionResult> Update(string username, UpdateUserDto updateUserDto)
         {
@@ -97,8 +95,7 @@ namespace UserService.Controllers
             await userInfo.SaveAsync();
             return NoContent();
         }
-
-        [Authorize]
+        
         [HttpDelete("{username}")]
         public async Task<IActionResult> Delete(string username)
         {

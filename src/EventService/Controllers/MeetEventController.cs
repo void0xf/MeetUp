@@ -28,7 +28,6 @@ public class MeetEventController : ControllerBase
         _mapper = mapper;
         _publishEndpoint = publishEndpoint;
     }
-
     [HttpGet]
     public async Task<ActionResult<List<MeetEventDto>>> GetAllEvents()
     {
@@ -36,7 +35,7 @@ public class MeetEventController : ControllerBase
         var dtoMeetEvents = _mapper.Map<List<MeetEventDto>>(meetEvents);
         return Ok(dtoMeetEvents);
     }
-
+    
     [HttpGet("{id}")]
     public async Task<ActionResult<MeetEventDto>> GetMeetEventById(Guid id)
     {
@@ -64,7 +63,7 @@ public class MeetEventController : ControllerBase
         return Ok(dtoMeetEvents);
     }
 
-    [Authorize]
+    
     [HttpPost("AddUserToParticipantList/{meetEventId}")]
     public async Task<ActionResult> AddUserToParticipantList(string meetEventId)
     {
@@ -98,7 +97,7 @@ public class MeetEventController : ControllerBase
         return Ok();
     }
 
-    [Authorize]
+    
     [HttpPost]
     public async Task<ActionResult<CreateMeetEventDto>> CreateMeetEvent(
         CreateMeetEventDto createMeetEvent
@@ -126,7 +125,7 @@ public class MeetEventController : ControllerBase
         );
     }
 
-    [Authorize]
+    
     [HttpPut("{id}")]
     public async Task<ActionResult> UpdateMeetEvent(Guid id, UpdateMeetEventDto updateMeetEvent)
     {
@@ -160,7 +159,7 @@ public class MeetEventController : ControllerBase
         return BadRequest("Problem with saving changes");
     }
 
-    [Authorize]
+    
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteMeetEvent(Guid id)
     {
