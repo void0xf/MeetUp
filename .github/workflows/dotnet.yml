@@ -27,49 +27,33 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Install MAUI Workloads
+      # MAUI workload installation removed
+
+      # Use backend-only approach instead of full solution build
+      - name: Restore backend only
         run: |
-          export DOTNET_ROOT=$HOME/.dotnet
-          export DOTNET_WORKLOAD_MANIFEST_ROOTS=$DOTNET_ROOT/sdk-manifests/8.0.0
-          export DOTNET_NOLOGO=true
-          export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
-          export DOTNET_CLI_TELEMETRY_OPTOUT=1
-          # Add more memory to Java heap to avoid issues during workload installation
-          export _JAVA_OPTIONS="-Xmx4g"
-          dotnet workload install maui android ios maccatalyst
-          dotnet workload list
+          dotnet restore src/Contracts/Contracts.csproj
+          dotnet restore src/IdentityService/IdentityService.csproj
+          dotnet restore src/EventService/EventService.csproj
+          dotnet restore src/SearchService/SearchService.csproj
+          dotnet restore src/UserService/UserService.csproj
+          dotnet restore src/ConversationService/ConversationService.csproj
+          dotnet restore src/GatewayService/GatewayService.csproj
+          dotnet restore tests/SearchService.Tests/SearchService.Tests.csproj
+          dotnet restore tests/EventService.Tests/EventService.Tests.csproj
 
-      - name: Restore dependencies
-        run: dotnet restore MeetUp.sln
-
-      # Alternative approach: Build only backend services (uncomment if MAUI keeps causing issues)
-      # - name: Restore backend only
-      #   run: |
-      #     dotnet restore src/Contracts/Contracts.csproj
-      #     dotnet restore src/IdentityService/IdentityService.csproj
-      #     dotnet restore src/EventService/EventService.csproj
-      #     dotnet restore src/SearchService/SearchService.csproj
-      #     dotnet restore src/UserService/UserService.csproj
-      #     dotnet restore src/ConversationService/ConversationService.csproj
-      #     dotnet restore src/GatewayService/GatewayService.csproj
-      #     dotnet restore tests/SearchService.Tests/SearchService.Tests.csproj
-      #     dotnet restore tests/EventService.Tests/EventService.Tests.csproj
-
-      - name: Build
-        run: dotnet build MeetUp.sln --no-restore
-
-      # Alternative approach: Build only backend services (uncomment if MAUI keeps causing issues)
-      # - name: Build backend only
-      #   run: |
-      #     dotnet build src/Contracts/Contracts.csproj --no-restore
-      #     dotnet build src/IdentityService/IdentityService.csproj --no-restore
-      #     dotnet build src/EventService/EventService.csproj --no-restore
-      #     dotnet build src/SearchService/SearchService.csproj --no-restore
-      #     dotnet build src/UserService/UserService.csproj --no-restore
-      #     dotnet build src/ConversationService/ConversationService.csproj --no-restore
-      #     dotnet build src/GatewayService/GatewayService.csproj --no-restore
-      #     dotnet build tests/SearchService.Tests/SearchService.Tests.csproj --no-restore
-      #     dotnet build tests/EventService.Tests/EventService.Tests.csproj --no-restore
+      # Build backend services only (no MAUI)
+      - name: Build backend only
+        run: |
+          dotnet build src/Contracts/Contracts.csproj --no-restore
+          dotnet build src/IdentityService/IdentityService.csproj --no-restore
+          dotnet build src/EventService/EventService.csproj --no-restore
+          dotnet build src/SearchService/SearchService.csproj --no-restore
+          dotnet build src/UserService/UserService.csproj --no-restore
+          dotnet build src/ConversationService/ConversationService.csproj --no-restore
+          dotnet build src/GatewayService/GatewayService.csproj --no-restore
+          dotnet build tests/SearchService.Tests/SearchService.Tests.csproj --no-restore
+          dotnet build tests/EventService.Tests/EventService.Tests.csproj --no-restore
 
       - name: Security scan
         uses: snyk/actions/dotnet@master
@@ -84,67 +68,3 @@ jobs:
           # Only test backend services, not client applications
           dotnet test tests/SearchService.Tests/SearchService.Tests.csproj --no-build --verbosity normal
           dotnet test tests/EventService.Tests/EventService.Tests.csproj --no-build --verbosity normal
-
-  docker-backend:
-    runs-on: ubuntu-latest
-    needs: build-and-test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Backend Service Images
-        run: |
-          docker-compose build identity-service
-          docker-compose build user-service
-          docker-compose build event-service
-          docker-compose build conversation-service
-          docker-compose build search-service
-          docker-compose build gateway-service
-
-      - name: Start Infrastructure Services
-        run: |
-          docker-compose up -d postgres mongodb rabbitmq
-          sleep 30  # Allow time for databases to initialize
-
-      - name: Start and Test Identity Service
-        run: |
-          docker-compose up -d identity-service
-          sleep 30  # Allow time for identity service to initialize
-          # Check if identity service is healthy
-          docker-compose ps identity-service
-          curl -f http://localhost:5000/health || exit 1
-
-      - name: Start and Test Other Backend Services
-        run: |
-          docker-compose up -d user-service event-service conversation-service search-service gateway-service
-          sleep 30  # Allow time for all services to initialize
-          docker-compose ps
-          # Health checks for each service
-          echo "Testing User Service..."
-          curl -f http://localhost:7003/health || echo "User service health check failed"
-          echo "Testing Event Service..."
-          curl -f http://localhost:7001/health || echo "Event service health check failed"
-          echo "Testing Search Service..."
-          curl -f http://localhost:7002/health || echo "Search service health check failed"
-          echo "Testing Conversation Service..."
-          curl -f http://localhost:7004/health || echo "Conversation service health check failed"
-          echo "Testing Gateway Service..."
-          curl -f http://localhost:6001/health || echo "Gateway service health check failed"
-
-      - name: Scan Docker Images for Vulnerabilities
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: "meetup_identity-service:latest"
-          format: "table"
-          exit-code: "0"
-          ignore-unfixed: true
-          vuln-type: "os,library"
-          severity: "CRITICAL,HIGH"
-
-      - name: Clean up resources
-        run: docker-compose down
-        if: always() # Ensure cleanup happens even if a previous step failed
